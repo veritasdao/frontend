@@ -6,9 +6,9 @@ import { XellarKitProvider, defaultConfig, darkTheme } from "@xellar/kit";
 import { liskSepolia } from "viem/chains";
 
 export const config = defaultConfig({
-  appName: "sansei",
+  appName: "veritas",
   // Required for WalletConnect
-  walletConnectProjectId: "f666eac5c0046ca5816da8900b35117d",
+  walletConnectProjectId: "8f5138c3b3968106a28d4f9e26d30289",
 
   // Required for Xellar Passport
   xellarAppId: "0975e065-37b5-4f7e-b357-eb60af4ab42c",
@@ -25,6 +25,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
       <QueryClientProvider client={queryClient}>
         <XellarKitProvider
           theme={darkTheme}
+          showConfirmationModal={true}
           // Fill this if you want to use Google Auth
           googleClientId="506201553534-8vfsk02dvv07lkchhboibksp61ggu491.apps.googleusercontent.com"
           // Fill this if you want to use Telegram Auth
