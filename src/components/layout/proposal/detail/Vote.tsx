@@ -12,9 +12,25 @@ import {
   useWriteContract,
 } from "wagmi";
 
-export default function Donate({ index }: { index: number }) {
+export default function Vote({ index }: { index: number }) {
   const { address } = useAccount();
   const [amount, setAmount] = React.useState<string>("");
+  const [vote, setVote] = React.useState<boolean | null>(null);
+
+  const { data: voted, refetch } = useReadContract({
+    abi: DAOABI,
+    address: DAOToken,
+    functionName: "hasVoted",
+    args: [index, address],
+  });
+
+  React.useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  async function chooseVote(vote: boolean) {
+    setVote(vote);
+  }
 
   const {
     data: hash,
@@ -45,8 +61,8 @@ export default function Donate({ index }: { index: number }) {
       await writeContractAsync({
         abi: DAOABI,
         address: DAOToken,
-        functionName: "donate",
-        args: [index, parseUnits(amount || "0", 2)],
+        functionName: "vote",
+        args: [index, vote, parseUnits(amount || "0", 2)],
       });
     } catch (error) {
       console.error("Error sending donation:", error);
@@ -61,6 +77,20 @@ export default function Donate({ index }: { index: number }) {
   });
   return (
     <div className="border p-5 rounded-md space-y-3">
+      <div className="grid grid-cols-2 gap-5">
+        <Button
+          variant={vote === true ? "default" : "outline"}
+          onClick={() => chooseVote(true)}
+        >
+          Setuju
+        </Button>
+        <Button
+          variant={vote === false ? "default" : "outline"}
+          onClick={() => chooseVote(false)}
+        >
+          Tidak Setuju
+        </Button>
+      </div>
       <div className="flex justify-between">
         <p>Jumlah (IDRX)</p>
         {balanceIDRX ? (
@@ -77,21 +107,28 @@ export default function Donate({ index }: { index: number }) {
           </p>
         )}
       </div>
-      <Input
-        placeholder="Contoh: 10000"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
+      <div>
+        <Input
+          placeholder="Contoh: 10000"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+        <p className="text-sm text-muted-foreground mt-2 font-medium">
+          1 IDRX = 1 Suara
+        </p>
+      </div>
       <Button
         onClick={sendDonation}
-        disabled={isPending || confirming || confirmed || !amount}
+        disabled={
+          isPending || confirming || confirmed || !amount || Boolean(voted)
+        }
       >
         {isPending || confirming ? (
           <p className="flex gap-1">
             Mengkonfirmasi <LoaderCircle className="animate-spin" />
           </p>
         ) : (
-          "Konfirmasi Donasi"
+          "Konfirmasi Vote"
         )}
       </Button>
 

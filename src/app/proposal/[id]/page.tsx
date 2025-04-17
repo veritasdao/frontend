@@ -1,18 +1,21 @@
+import Action from "@/components/layout/proposal/detail/Action";
 import { ChartVoter } from "@/components/layout/proposal/detail/ChartVoter";
+import Detail from "@/components/layout/proposal/detail/Detail";
 import Information from "@/components/layout/proposal/detail/Information";
-import Donate from "@/components/layout/proposal/donate";
 import React from "react";
 
-export default function page() {
+type Params = { id: number };
+
+export default async function page({ params }: { params: Params }) {
+  const { id } = await params;
   return (
     <main className="grid xl:grid-cols-3 gap-5">
-      <div className="col-span-2">
+      <div className="col-span-2 space-y-5 border-">
         <Information />
         <ChartVoter />
+        <Detail />
       </div>
-      <div>
-        <Donate />
-      </div>
+      <Action index={id} />
     </main>
   );
 }

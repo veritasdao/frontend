@@ -22,15 +22,15 @@ import { useReadContract } from "wagmi";
 //   totalNoPower: number;
 //   //   totalDonated: number;
 // };
-export default function useGetTotalDonations(index: number) {
+export default function useGetVoters(index: number) {
   const {
-    data: totalDonation,
+    data: voters,
     isLoading,
     refetch,
   } = useReadContract({
     abi: DAOABI,
     address: DAOToken,
-    functionName: "totalDonations",
+    functionName: "getVoters",
     args: [index], // Ganti dengan index proposal yang sesuai
   });
 
@@ -41,7 +41,7 @@ export default function useGetTotalDonations(index: number) {
   }, [refetch]);
 
   return {
-    totalDonation,
+    voters,
     isLoading,
   };
 }

@@ -3,6 +3,7 @@ import { Manrope } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Web3Provider } from "@/config/Web3Provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const manrope = Manrope({
   display: "swap",
@@ -29,6 +30,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Web3Provider>{children}</Web3Provider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

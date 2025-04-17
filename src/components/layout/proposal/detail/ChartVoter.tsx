@@ -1,7 +1,7 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, LabelList } from "recharts";
 
 import {
   Card,
@@ -17,109 +17,74 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+// import moment from "moment";
+
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { month: "January", visitors: 186 },
+  { month: "February", visitors: 205 },
+  { month: "March", visitors: -207 },
+  { month: "April", visitors: 173 },
+  { month: "May", visitors: -209 },
+  { month: "June", visitors: 214 },
+  { month: "January", visitors: 186 },
+  { month: "February", visitors: 205 },
+  { month: "March", visitors: -207 },
+  { month: "April", visitors: 173 },
+  { month: "May", visitors: -209 },
+  { month: "June", visitors: 214 },
+  { month: "January", visitors: 186 },
+  { month: "February", visitors: 205 },
+  { month: "March", visitors: -207 },
+  { month: "April", visitors: 173 },
+  { month: "May", visitors: -209 },
+  { month: "June", visitors: 214 },
+  { month: "June", visitors: -1000 },
+  { month: "June", visitors: 2000 },
 ];
 
 const chartConfig = {
-  desktop: {
-    label: "Yes",
-    color: "hsl(175.3 77.4% 26.1%)",
-  },
-  mobile: {
-    label: "No",
-    color: "hsl(0 73.7% 41.8%)",
+  visitors: {
+    label: "Visitors",
   },
 } satisfies ChartConfig;
 
 export function ChartVoter() {
   return (
-    <Card>
+    <Card className="bg-transparent border-[#1d4ed8]">
       <CardHeader>
-        <CardTitle>Area Chart - Gradient</CardTitle>
-        <CardDescription>
-          Showing total visitors for the last 6 months
-        </CardDescription>
+        <CardTitle>Voter Indikator</CardTitle>
+        <CardDescription>Grafik dalam 1D (1 Day)</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <AreaChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
+          <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel hideIndicator />}
             />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <defs>
-              <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-desktop)"
-                  stopOpacity={0.8}
+            <Bar dataKey="visitors">
+              <LabelList position="top" dataKey="month" fillOpacity={1} />
+              {chartData.map((item) => (
+                <Cell
+                  key={item.month}
+                  fill={
+                    item.visitors > 0
+                      ? "hsl(var(--chart-5))"
+                      : "hsl(var(--chart-2))"
+                  }
                 />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-desktop)"
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
-              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-mobile)"
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-mobile)"
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
-            </defs>
-            <Area
-              dataKey="mobile"
-              type="natural"
-              fill="url(#fillMobile)"
-              fillOpacity={0.4}
-              stroke="var(--color-mobile)"
-              stackId="a"
-            />
-            <Area
-              dataKey="desktop"
-              type="natural"
-              fill="url(#fillDesktop)"
-              fillOpacity={0.4}
-              stroke="var(--color-desktop)"
-              stackId="a"
-            />
-          </AreaChart>
+              ))}
+            </Bar>
+          </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              January - June 2024
-            </div>
-          </div>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="leading-none text-muted-foreground">
+          Showing total visitors for the last 6 months
         </div>
       </CardFooter>
     </Card>

@@ -1,35 +1,36 @@
 "use client";
-import { DAOABI, DAOToken } from "@/config/DAO";
+// import { DAOABI, DAOToken } from "@/config/DAO";
 import useGetProposals from "@/hooks/getProposal";
 import Image from "next/image";
 import React from "react";
-import { useReadContract } from "wagmi";
+// import { useReadContract } from "wagmi";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Information() {
   const { proposals, isLoading } = useGetProposals();
-  const [index, setIndex] = React.useState<number | null>(null);
+  // const [index, setIndex] = React.useState<number | null>(null);
 
-  React.useEffect(() => {
-    if (proposals && proposals.length > 0) {
-      setIndex(proposals.length - 1);
-    }
-  }, [proposals]);
+  // React.useEffect(() => {
+  //   if (proposals && proposals.length > 0) {
+  //     setIndex(proposals.length - 1);
+  //   }
+  // }, [proposals]);
 
-  const {
-    data: totalDonations,
-    isLoading: loadingTotalDonations,
-    refetch,
-  } = useReadContract({
-    abi: DAOABI,
-    address: DAOToken,
-    functionName: "getTotalDonations",
-    args: [index],
-  });
+  // const {
+  //   data: totalDonations,
+  //   isLoading: loadingTotalDonations,
+  //   refetch,
+  // } = useReadContract({
+  //   abi: DAOABI,
+  //   address: DAOToken,
+  //   functionName: "getTotalDonations",
+  //   args: [index],
+  // });
 
-  React.useEffect(() => {
-    refetch();
-  }, [refetch]);
+  // React.useEffect(() => {
+  //   refetch();
+  // }, [refetch]);
+
   return (
     <section>
       {isLoading && <p>Loading...</p>}

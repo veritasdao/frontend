@@ -4,7 +4,7 @@ import { DAOABI, DAOToken } from "@/config/DAO";
 import React from "react";
 import { useReadContract } from "wagmi";
 
-type ProposalCardType = {
+type ProposalDetailType = {
   title: string;
   description: string;
   github: string;
@@ -18,15 +18,19 @@ type ProposalCardType = {
   approved: boolean;
   withdrawn: boolean;
   rewardPool: number;
+  totalYesPower: number;
+  totalNoPower: number;
+  //   totalDonated: number;
 };
-export default function useGetProposals() {
+export default function useGetDetailProposals(index: number) {
   const { data, isLoading, refetch } = useReadContract({
     abi: DAOABI,
     address: DAOToken,
-    functionName: "getProposals",
+    functionName: "proposals",
+    args: [index], // Ganti dengan index proposal yang sesuai
   });
 
-  const proposals = data as ProposalCardType[]; // ✅ cast ke tipe yang tepa
+  const proposals = data as ProposalDetailType[]; // ✅ cast ke tipe yang tepa
 
   React.useEffect(() => {
     refetch();
