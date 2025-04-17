@@ -17,7 +17,7 @@ export const ConnectButtonCustom = () => {
         if (!isConnected) {
           return (
             <Button onClick={openConnectModal} type="button" size={"lg"}>
-              Connect Wallet
+              Hubungkan akun
             </Button>
           );
         }
