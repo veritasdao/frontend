@@ -28,7 +28,7 @@ const chartConfig = {
 
 export function ChartVoter({ index }: { index: number }) {
   const { voters } = useGetVoters(index) as {
-    voters: [string[], boolean[], string[], any, number[]];
+    voters: [string[], boolean[], string[], string[], number[]];
   };
 
   const formattedVoters =
