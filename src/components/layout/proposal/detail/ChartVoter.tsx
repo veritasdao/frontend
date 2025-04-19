@@ -2,7 +2,6 @@
 
 import { TrendingUp } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis } from "recharts";
-
 import {
   Card,
   CardContent,
@@ -17,95 +16,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-
-// Sample data
-const transaction = [
-  {
-    date: "2025-04-10",
-    transactions: [
-      { support: true, amount: 1500 },
-      { support: false, amount: 300 },
-      { support: true, amount: 700 },
-    ],
-  },
-  {
-    date: "2025-04-11",
-    transactions: [
-      { support: true, amount: 2000 },
-      { support: false, amount: 500 },
-    ],
-  },
-  {
-    date: "2025-04-12",
-    transactions: [
-      { support: true, amount: 1800 },
-      { support: false, amount: 400 },
-      { support: true, amount: 600 },
-      { support: false, amount: 5000 },
-    ],
-  },
-  {
-    date: "2025-04-10",
-    transactions: [
-      { support: true, amount: 1500 },
-      { support: false, amount: 300 },
-      { support: true, amount: 700 },
-    ],
-  },
-  {
-    date: "2025-04-11",
-    transactions: [
-      { support: true, amount: 2000 },
-      { support: false, amount: 500 },
-    ],
-  },
-  {
-    date: "2025-04-12",
-    transactions: [
-      { support: true, amount: 1800 },
-      { support: false, amount: 400 },
-      { support: true, amount: 600 },
-      { support: false, amount: 5000 },
-    ],
-  },
-  {
-    date: "2025-04-10",
-    transactions: [
-      { support: true, amount: 1500 },
-      { support: false, amount: 300 },
-      { support: true, amount: 700 },
-    ],
-  },
-  {
-    date: "2025-04-11",
-    transactions: [
-      { support: true, amount: 2000 },
-      { support: false, amount: 500 },
-    ],
-  },
-  {
-    date: "2025-04-12",
-    transactions: [
-      { support: true, amount: 100 },
-      { support: false, amount: 100 },
-      { support: true, amount: 100 },
-      { support: true, amount: 10000 },
-    ],
-  },
-];
-
-// Calculate daily net amount
-const chartData = transaction.map((data) => {
-  const amountDay = data.transactions.reduce(
-    (sum, transact) =>
-      sum + (transact.support ? transact.amount : -transact.amount),
-    0
-  );
-  return {
-    day: data.date,
-    amountDay,
-  };
-});
+import useGetVoters from "@/hooks/getVoters";
+import moment from "moment";
+import { formatUnits } from "viem";
 
 const chartConfig = {
   amountDay: {
@@ -113,7 +26,37 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ChartVoter() {
+export function ChartVoter({ index }: { index: number }) {
+  const { voters } = useGetVoters(index) as {
+    voters: [string[], boolean[], string[], any, number[]];
+  };
+
+  const formattedVoters =
+    voters && voters[0]
+      ? voters[0].map((_, i) => ({
+          address: voters[0][i],
+          support: voters[1][i],
+          amount: Number(formatUnits(BigInt(voters[2][i]), 2)),
+          date: moment(Number(voters[4][i]) * 1000).format("ll"),
+        }))
+      : [];
+
+  // Grouping by date
+  const grouped = formattedVoters.reduce<Record<string, number>>(
+    (acc, voter) => {
+      const key = voter.date;
+      const value = voter.support ? voter.amount : -voter.amount;
+      acc[key] = (acc[key] || 0) + value;
+      return acc;
+    },
+    {}
+  );
+
+  const chartData = Object.entries(grouped).map(([day, amountDay]) => ({
+    day,
+    amountDay,
+  }));
+
   return (
     <Card className="bg-transparent border-[#1d4ed8]">
       <CardHeader>
@@ -122,17 +65,16 @@ export function ChartVoter() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData}>
-            <XAxis
-              dataKey="day"
-              tickLine={true}
-              tickMargin={10}
-              axisLine={true}
-              // tickFormatter={(value) => value.slice()}
-            />
-            <CartesianGrid vertical={true} />
+          <BarChart
+            accessibilityLayer
+            data={chartData}
+            barSize={75}
+            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+          >
+            <XAxis dataKey="day" tickLine tickMargin={10} axisLine />
+            <CartesianGrid vertical />
             <ChartTooltip
-              cursor={true}
+              cursor
               content={<ChartTooltipContent hideLabel hideIndicator />}
             />
             <Bar dataKey="amountDay">
@@ -156,7 +98,7 @@ export function ChartVoter() {
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Showing total votes grouped by day
         </div>
       </CardFooter>
     </Card>

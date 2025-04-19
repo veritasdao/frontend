@@ -2,6 +2,7 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Detail from "./layout/proposal/detail/Detail";
 import HistoryVote from "./layout/proposal/detail/HistoryVote";
+import HistoryDonate from "./layout/proposal/detail/HIstoryDonate";
 
 export default function ProposalTab({ index }: { index: number }) {
   return (
@@ -14,7 +15,9 @@ export default function ProposalTab({ index }: { index: number }) {
       <TabsContent value="detail">
         <Detail index={index} />
       </TabsContent>
-      <TabsContent value="donasi">Change your password here.</TabsContent>
+      <TabsContent value="donasi">
+        <HistoryDonate index={index} />
+      </TabsContent>
       <TabsContent value="vote">
         <HistoryVote index={index} />
       </TabsContent>

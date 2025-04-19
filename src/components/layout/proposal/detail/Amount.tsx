@@ -36,11 +36,15 @@ export default function Amount({
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             {requestedAmount !== null && totalDonation !== null
-              ? formatUnits(BigInt(totalDonation), 2)
+              ? parseFloat(
+                  formatUnits(BigInt(totalDonation), 2)
+                ).toLocaleString()
               : "0"}
             /
             {requestedAmount !== null
-              ? formatUnits(BigInt(requestedAmount), 2)
+              ? parseFloat(
+                  formatUnits(BigInt(requestedAmount), 2)
+                ).toLocaleString()
               : "0"}{" "}
             IDRX
           </p>

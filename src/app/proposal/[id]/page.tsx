@@ -14,7 +14,7 @@ export default async function page({ params }: { params: Params }) {
       <div className="col-span-2 space-y-5 ">
         <BackButton />
         <Information index={id} />
-        <ChartVoter />
+        <ChartVoter index={id} />
         <ProposalTab index={id} />
       </div>
       <Action index={id} />
