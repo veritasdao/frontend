@@ -18,18 +18,18 @@ export default function AppHeader() {
         })
       );
     }
-  }, [chains, isConnected, address]);
+  }, [chains, isConnected, address, switchChain]);
 
   return (
     <header className="mb-10 flex items-center justify-between">
-      <section className="flex items-center gap-5">
+      <section className="flex items-center gap-5 font-medium">
         <Link href={"/"} className="text-2xl font-bold">
           Veritas
         </Link>
         <Link
-          href={"/create"}
+          href={"/proposal/create"}
           className={`text-sm text-muted-foreground hover:text-primary duration-300 ${
-            pathname === "/create" ? "text-primary" : ""
+            pathname === "/proposal/create" ? "text-primary" : ""
           }`}
         >
           Buat Proposal

@@ -1,7 +1,7 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, Cell, LabelList } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis } from "recharts";
 
 import {
   Card,
@@ -17,34 +17,99 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-// import moment from "moment";
 
-const chartData = [
-  { month: "January", visitors: 186 },
-  { month: "February", visitors: 205 },
-  { month: "March", visitors: -207 },
-  { month: "April", visitors: 173 },
-  { month: "May", visitors: -209 },
-  { month: "June", visitors: 214 },
-  { month: "January", visitors: 186 },
-  { month: "February", visitors: 205 },
-  { month: "March", visitors: -207 },
-  { month: "April", visitors: 173 },
-  { month: "May", visitors: -209 },
-  { month: "June", visitors: 214 },
-  { month: "January", visitors: 186 },
-  { month: "February", visitors: 205 },
-  { month: "March", visitors: -207 },
-  { month: "April", visitors: 173 },
-  { month: "May", visitors: -209 },
-  { month: "June", visitors: 214 },
-  { month: "June", visitors: -1000 },
-  { month: "June", visitors: 2000 },
+// Sample data
+const transaction = [
+  {
+    date: "2025-04-10",
+    transactions: [
+      { support: true, amount: 1500 },
+      { support: false, amount: 300 },
+      { support: true, amount: 700 },
+    ],
+  },
+  {
+    date: "2025-04-11",
+    transactions: [
+      { support: true, amount: 2000 },
+      { support: false, amount: 500 },
+    ],
+  },
+  {
+    date: "2025-04-12",
+    transactions: [
+      { support: true, amount: 1800 },
+      { support: false, amount: 400 },
+      { support: true, amount: 600 },
+      { support: false, amount: 5000 },
+    ],
+  },
+  {
+    date: "2025-04-10",
+    transactions: [
+      { support: true, amount: 1500 },
+      { support: false, amount: 300 },
+      { support: true, amount: 700 },
+    ],
+  },
+  {
+    date: "2025-04-11",
+    transactions: [
+      { support: true, amount: 2000 },
+      { support: false, amount: 500 },
+    ],
+  },
+  {
+    date: "2025-04-12",
+    transactions: [
+      { support: true, amount: 1800 },
+      { support: false, amount: 400 },
+      { support: true, amount: 600 },
+      { support: false, amount: 5000 },
+    ],
+  },
+  {
+    date: "2025-04-10",
+    transactions: [
+      { support: true, amount: 1500 },
+      { support: false, amount: 300 },
+      { support: true, amount: 700 },
+    ],
+  },
+  {
+    date: "2025-04-11",
+    transactions: [
+      { support: true, amount: 2000 },
+      { support: false, amount: 500 },
+    ],
+  },
+  {
+    date: "2025-04-12",
+    transactions: [
+      { support: true, amount: 100 },
+      { support: false, amount: 100 },
+      { support: true, amount: 100 },
+      { support: true, amount: 10000 },
+    ],
+  },
 ];
 
+// Calculate daily net amount
+const chartData = transaction.map((data) => {
+  const amountDay = data.transactions.reduce(
+    (sum, transact) =>
+      sum + (transact.support ? transact.amount : -transact.amount),
+    0
+  );
+  return {
+    day: data.date,
+    amountDay,
+  };
+});
+
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  amountDay: {
+    label: "Voters",
   },
 } satisfies ChartConfig;
 
@@ -58,18 +123,25 @@ export function ChartVoter() {
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart accessibilityLayer data={chartData}>
-            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="day"
+              tickLine={true}
+              tickMargin={10}
+              axisLine={true}
+              // tickFormatter={(value) => value.slice()}
+            />
+            <CartesianGrid vertical={true} />
             <ChartTooltip
-              cursor={false}
+              cursor={true}
               content={<ChartTooltipContent hideLabel hideIndicator />}
             />
-            <Bar dataKey="visitors">
-              <LabelList position="top" dataKey="month" fillOpacity={1} />
+            <Bar dataKey="amountDay">
+              <LabelList position="top" dataKey="amountDay" fillOpacity={1} />
               {chartData.map((item) => (
                 <Cell
-                  key={item.month}
+                  key={item.day}
                   fill={
-                    item.visitors > 0
+                    item.amountDay > 0
                       ? "hsl(var(--chart-5))"
                       : "hsl(var(--chart-2))"
                   }

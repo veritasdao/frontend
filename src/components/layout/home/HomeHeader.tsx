@@ -16,7 +16,7 @@ export default function HomeHeader() {
             target="_blank"
           >
             <Layers />
-            Proposals
+            Proposal
           </Link>
         </li>
         <li>
@@ -26,7 +26,7 @@ export default function HomeHeader() {
             className="text-sm flex gap-2 items-center text-muted-foreground hover:text-primary duration-300"
           >
             <Users />
-            Community
+            Komunitas
           </Link>
         </li>
         <li>
@@ -36,7 +36,7 @@ export default function HomeHeader() {
             target="_blank"
           >
             <BookOpenText />
-            Docs
+            Dokumentasi
           </Link>
         </li>
       </ul>

@@ -3,7 +3,7 @@ import React from "react";
 import { Config, WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { XellarKitProvider, defaultConfig, darkTheme } from "@xellar/kit";
-import { lisk, liskSepolia } from "viem/chains";
+import { liskSepolia } from "viem/chains";
 
 export const config = defaultConfig({
   appName: "veritas",

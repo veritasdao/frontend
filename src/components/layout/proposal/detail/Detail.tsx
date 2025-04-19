@@ -1,14 +1,13 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { LinkPreview } from "@/components/ui/link-preview";
+import useGetDetailProposals from "@/hooks/getDetailProposal";
 // import { DAOABI, DAOToken } from "@/config/DAO";
-import useGetProposals from "@/hooks/getProposal";
-import { Github, Newspaper } from "lucide-react";
+import { BookUser, Github, Newspaper } from "lucide-react";
 import React from "react";
 // import { useReadContract } from "wagmi";
 
-export default function Detail() {
-  const { proposals, isLoading } = useGetProposals();
+export default function Detail({ index }: { index: number }) {
+  const { proposal, isLoading } = useGetDetailProposals(index);
   // const [index, setIndex] = React.useState<number | null>(null);
 
   // React.useEffect(() => {
@@ -35,44 +34,71 @@ export default function Detail() {
   return (
     <section>
       {isLoading && <p>Loading...</p>}
-      {proposals?.map((proposal, index: number) => {
-        return (
-          <div className="space-y-5" key={index}>
-            <div>
-              <h2 className="text-2xl font-bold text-muted-foreground">
-                About -{" "}
-                <span className="font-normal text-primary">
-                  {proposal.title}
-                </span>
-              </h2>
-              <p>{proposal.description}</p>
+      <div className="space-y-5" key={index}>
+        <div>
+          <h2 className="text-2xl font-bold text-[#3b82f6]">Abstrak</h2>
+          <p>{proposal?.description}</p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold text-[#3b82f6]">Motivasi</h2>
+          <p>{proposal?.motivasi}</p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold text-[#3b82f6]">Rincian</h2>
+          <p className="whitespace-pre-line">{proposal?.rincian}</p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold text-[#3b82f6]">
+            Manfaat/Keuntungan
+          </h2>
+          <p>{proposal?.keuntungan}</p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold text-[#3b82f6]">Tantangan</h2>
+          <p>{proposal?.tantangan}</p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold text-[#3b82f6]">
+            Dampak dan Hasil
+          </h2>
+          <p>{proposal?.dampak_dan_hasil}</p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold text-[#3b82f6] mb-1">
+            Dokumen Pendukung
+          </h2>
+
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <BookUser />
+              <p>Pemilik proposal:</p>
+              <LinkPreview url={`${proposal?.ownerlink}`}>
+                <span className="text-[#3b82f6]">{proposal?.ownerlink}</span>
+              </LinkPreview>
             </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-muted-foreground">
-                Resource & Reference -{" "}
-                <span className="font-normal text-primary">
-                  {proposal.title}
-                </span>
-              </h2>
-
-              <div className="space-x-5">
-                <LinkPreview url={`${proposal.github}`}>
-                  <Button size={"lg"}>
-                    <Github />
-                  </Button>
-                </LinkPreview>
-
-                <LinkPreview url={`${proposal.github}`}>
-                  <Button size={"lg"}>
-                    <Newspaper />
-                  </Button>
-                </LinkPreview>
-              </div>
+            <div className="flex items-center gap-2">
+              <Github />
+              <p>Github:</p>
+              <LinkPreview url={`${proposal?.github}`}>
+                <span className="text-[#3b82f6]">{proposal?.github}</span>
+              </LinkPreview>
+            </div>
+            <div className="flex items-center gap-2">
+              <Newspaper />
+              <p>Whitepaper:</p>
+              <LinkPreview url={`${proposal?.whitepaper}`}>
+                <span className="text-[#3b82f6]">{proposal?.whitepaper}</span>
+              </LinkPreview>
             </div>
           </div>
-        );
-      })}
+        </div>
+      </div>
     </section>
   );
 }
