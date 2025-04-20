@@ -20,7 +20,7 @@ export default function HistoryDonate({ index }: { index: number }) {
   };
 
   if (!donates || donates.length !== 3) {
-    return <p className="text-muted">Belum ada donasi</p>;
+    return <p className="text-center">Belum ada donasi</p>;
   }
 
   const [addresses, rawAmounts, rawTimestamps] = donates;

@@ -21,7 +21,7 @@ export default function HistoryVote({ index }: { index: number }) {
   };
 
   if (!voters || voters.length < 5) {
-    return <p className="text-muted">Belum ada voting</p>;
+    return <p className="text-center">Belum ada voting</p>;
   }
 
   const [addresses, supports, rawAmounts, , rawTimestamps] = voters;

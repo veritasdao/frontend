@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { AvatarUser } from "../../AvatarUser";
 import { BorderBeam } from "../../magicui/border-beam";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -14,19 +15,21 @@ export default function Hero() {
         Terdesentralisasi.
       </h1>
       <AvatarUser />
-      <Button
-        size={"lg"}
-        className="shadow-xl shadow-[#1d4ed8] relative px-10 py-6 text-lg"
-        variant={"outline"}
-      >
-        Mulai Sekarang
-        <BorderBeam
-          duration={5}
-          size={80}
-          colorFrom="#1d4ed8"
-          colorTo="#1d4ed8"
-        />
-      </Button>
+      <Link href={"/proposal"} target="_blank">
+        <Button
+          size={"lg"}
+          className="shadow-xl shadow-[#1d4ed8] relative px-10 py-6 text-lg"
+          variant={"outline"}
+        >
+          Mulai Sekarang
+          <BorderBeam
+            duration={5}
+            size={80}
+            colorFrom="#1d4ed8"
+            colorTo="#1d4ed8"
+          />
+        </Button>
+      </Link>
     </section>
   );
 }

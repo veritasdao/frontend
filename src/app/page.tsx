@@ -11,8 +11,8 @@ export default function Home() {
     <main className="m-5 xl:mx-20 2xl:mx-40 space-y-32">
       <HomeHeader />
       <IntroduceVideo />
-      <Intro />
       <Velocity />
+      <Intro />
       <Flow />
       <Quotes />
       <Testimonials />

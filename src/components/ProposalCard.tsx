@@ -55,13 +55,14 @@ export default function ProposalCard() {
                 href={`/proposal/${proposals.length - 1 - index}`}
                 key={index}
               >
-                <div className="rounded-md bg-gradient-to-br from-[#1d4ed8] via-black to-black hover:from-black hover:to-[#1d4ed8] p-5 duration-300 transition ease-in-out">
+                <div className="rounded-md bg-gradient-to-br from-[#3b82f6] via-black to-black hover:from-black hover:to-[#1d4ed8] p-5 duration-300 transition ease-in-out">
                   <Image
                     src={proposal.image}
                     alt="Proposal Image "
                     width={500}
                     height={300}
                     className="rounded-md object-cover mb-3 aspect-video"
+                    priority={true}
                   />
                   <h2 className="text-lg font-semibold capitalize">
                     {proposal.title}
