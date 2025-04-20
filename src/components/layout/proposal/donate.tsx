@@ -67,7 +67,9 @@ export default function Donate({ index }: { index: number }) {
           <p className="text-muted-foreground flex gap-1">
             <Wallet strokeWidth={1} />
             <span className="font-bold">
-              {formatUnits(BigInt(balanceIDRX as bigint), 2)}
+              {parseFloat(
+                formatUnits(BigInt(balanceIDRX as bigint), 2)
+              ).toLocaleString()}
             </span>{" "}
             IDRX
           </p>
