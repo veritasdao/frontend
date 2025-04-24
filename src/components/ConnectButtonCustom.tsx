@@ -2,7 +2,7 @@
 
 import { ConnectButton } from "@xellar/kit";
 import { Button } from "./ui/button";
-import { GlobeLock, Plus, User, Wallet } from "lucide-react";
+import { GlobeLock, Plus, User, Wallet, Zap } from "lucide-react";
 import useGetBalance from "@/hooks/getBalance";
 import { formatUnits } from "viem";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,9 +15,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import useGetVotingPower from "@/hooks/getVotingPower";
 
 export const ConnectButtonCustom = () => {
   const { balanceIDRX, balanceNative } = useGetBalance();
+  const { balanceVotingPower } = useGetVotingPower();
 
   function formatedBalance(balance: bigint | undefined): string {
     if (!balance) return "0";
@@ -100,6 +102,15 @@ export const ConnectButtonCustom = () => {
                     </Avatar>{" "}
                   </div>
                 </DropdownMenuItem>
+                <DropdownMenuItem className="flex items-center justify-between">
+                  {parseFloat(
+                    formatedBalance(balanceVotingPower as bigint) || "0"
+                  ).toLocaleString()}
+                  <div className="flex items-center gap-1">
+                    <p className="text-sm">Hak Suara</p>
+                    <Zap />
+                  </div>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Tambah Saldo Token</DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -114,6 +125,12 @@ export const ConnectButtonCustom = () => {
                   <DropdownMenuItem>
                     <Plus />
                     ETH Lisk Sepolia
+                  </DropdownMenuItem>
+                </Link>
+                <Link href={"/proposal/staking"} target="_blank">
+                  <DropdownMenuItem>
+                    <Plus />
+                    Hak Suara
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>

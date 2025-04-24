@@ -1,0 +1,172 @@
+import React from "react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { ClockArrowUp, Wallet, Zap } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "./ui/button";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import moment from "moment";
+import { injected, useAccount, useConnect } from "wagmi";
+
+type valueFormType = {
+  amount: string;
+  duration: string;
+};
+
+const DURATIONS = [
+  { label: "1 Bulan", value: "30" },
+  { label: "3 Bulan", value: "90" },
+  { label: "6 Bulan", value: "186" },
+  { label: "1 Tahun", value: "365" },
+];
+
+moment.locale("id");
+
+export default function StakeForm() {
+  const { address } = useAccount();
+  const { connect } = useConnect();
+
+  async function confirmStake(values: valueFormType) {
+    console.log(Number(values.amount));
+    console.log(Number(values.duration));
+  }
+
+  const formik = useFormik({
+    initialValues: {
+      amount: "",
+      duration: "",
+    },
+    validationSchema: Yup.object({
+      amount: Yup.number().required("Mohon mengisikan jumlah tabungan"),
+      duration: Yup.number().required("Mohon mengisikan durasi tabungan"),
+    }),
+    onSubmit: confirmStake,
+  });
+
+  // Helper to handle button selection
+  function handleDurationButton(days: string) {
+    formik.setFieldValue("duration", days);
+  }
+
+  const formattedDuration = moment()
+    .add(Number(formik.values.duration), "days")
+    .format("LLLL");
+
+  return (
+    <form onSubmit={formik.handleSubmit}>
+      <Card>
+        <CardContent className="space-y-5">
+          <section className="space-y-2">
+            <div className="flex justify-between font-medium text-sm">
+              <p>Jumlah</p>
+              <div className="flex items-center gap-2">
+                <Wallet size={20} />
+                <p>0.1 IDRX</p>
+              </div>
+            </div>
+            <div className="flex items-center relative">
+              <Input
+                id="amount"
+                name="amount"
+                placeholder=""
+                value={formik.values.amount}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <div className="absolute right-0 rounded-tr-md rounded-br-md p-1 px-5 flex items-center gap-1">
+                <Avatar className="w-5 h-5">
+                  <AvatarImage src="/images/idrx.svg" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <p>IDRX</p>
+              </div>
+            </div>
+            {formik.touched.amount && formik.errors.amount && (
+              <div className="text-red-500 text-sm">{formik.errors.amount}</div>
+            )}
+          </section>
+
+          <section className="space-y-2">
+            <p className="font-medium text-sm">Durasi menabung</p>
+            <div className="flex items-center relative">
+              <Input
+                id="duration"
+                name="duration"
+                placeholder=""
+                value={formik.values.duration}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                // readOnly // Make it read-only if you only want button selection
+              />
+              <div className="absolute right-0 rounded-tr-md rounded-br-md p-1 px-5 flex items-center gap-1">
+                <ClockArrowUp size={20} />
+                <p>Hari</p>
+              </div>
+            </div>
+            <div className="grid xl:grid-cols-4 gap-5">
+              {DURATIONS.map((d) => (
+                <Button
+                  key={d.value}
+                  variant={
+                    formik.values.duration === d.value ? "default" : "outline"
+                  }
+                  type="button"
+                  onClick={() => handleDurationButton(d.value)}
+                >
+                  {d.label}
+                </Button>
+              ))}
+            </div>
+            {formik.touched.duration && formik.errors.duration && (
+              <div className="text-red-500 text-sm">
+                {formik.errors.duration}
+              </div>
+            )}
+          </section>
+
+          <section className="text-sm text-muted-foreground space-y-2">
+            <div className="flex items-center justify-between">
+              <h1>IDRX untuk ditabung</h1>
+              <p>{formik.values.amount} IDRX</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <h1>Waktu mengambil tabungan</h1>
+              <p>{formattedDuration}</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <h1>Kekuatan/Hak suara</h1>
+              <div className="flex items-center gap-1">
+                <p>{formik.values.amount}</p>
+                <Zap size={15} />
+              </div>
+            </div>
+          </section>
+        </CardContent>
+        <CardFooter>
+          {address ? (
+            <Button
+              type="submit"
+              size={"lg"}
+              className="w-full"
+              disabled={!address}
+            >
+              Konfirmasi Menabung
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              className="w-full rounded"
+              size={"lg"}
+              variant={"outline"}
+              onClick={() => connect({ connector: injected() })}
+            >
+              <Wallet className="w-10 h-10" />
+              Hubungkan akun terlebih dahulu
+            </Button>
+          )}
+        </CardFooter>
+      </Card>
+    </form>
+  );
+}

@@ -13,7 +13,6 @@ export default function page() {
           didukung dan diwujudkan bersama Veritas DAO.
         </h2>
       </div>
-
       <Form />
     </main>
   );
