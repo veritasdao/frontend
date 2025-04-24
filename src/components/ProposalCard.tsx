@@ -12,8 +12,8 @@ import { NumberTicker } from "./magicui/number-ticker";
 
 export default function ProposalCard() {
   const { proposals, isLoading } = useGetProposals();
-  const proposal = proposals?.map((image) => image.image);
-  console.log(proposal);
+  // const proposal = proposals?.map((image) => image.image);
+  // console.log(proposal);
   // const [index, setIndex] = React.useState<number | null>(null);
 
   // React.useEffect(() => {
@@ -45,7 +45,7 @@ export default function ProposalCard() {
           <strong className="text-primary">{proposals.length} Proposal</strong>
         )}
       </h1>
-      <div className="grid grid-cols-4 gap-5">
+      <div className="grid xl:grid-cols-3 2xl:grid-cols-4 gap-5">
         {isLoading && <p>Loading...</p>}
         {proposals
           ?.sort((a, b) => Number(b.deadline) - Number(a.deadline))
@@ -55,7 +55,7 @@ export default function ProposalCard() {
                 href={`/proposal/${proposals.length - 1 - index}`}
                 key={index}
               >
-                <div className="rounded-md bg-gradient-to-br from-[#3b82f6] via-black to-black hover:from-black hover:to-[#1d4ed8] p-5 duration-300 transition ease-in-out">
+                <div className="rounded-md space-y-1 bg-gradient-to-br from-[#3b82f6] via-black to-black hover:from-black hover:to-[#1d4ed8] p-5 duration-300 transition ease-in-out">
                   <Image
                     src={proposal.image}
                     alt="Proposal Image "
@@ -64,22 +64,16 @@ export default function ProposalCard() {
                     className="rounded-md object-cover mb-3 aspect-video"
                     priority={true}
                   />
-                  <h2 className="text-lg font-semibold capitalize">
+                  <h2 className="text-lg font-semibold capitalize ine-clamp-2">
                     {proposal.title}
                   </h2>
-                  <div className="flex items-center gap-2">
-                    <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.pnsg" />
-                      <AvatarFallback>
-                        {proposal.proposer.charAt(1)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <p className="text-sm text-muted-foreground ">
-                      {proposal.proposer.slice(0, 5)}...
-                      {proposal.proposer.slice(-5)}
-                    </p>
-                  </div>
-                  <p className="line-clamp-2 mb-3">{proposal.description}</p>
+                  <p className="text-sm text-muted-foreground ">
+                    creator: {proposal.proposer.slice(0, 5)}...
+                    {proposal.proposer.slice(-5)}
+                  </p>
+                  <p className="line-clamp-2 mb-3 text-sm">
+                    {proposal.description}
+                  </p>
                   <div className="text-end">
                     <p className="text-xs text-muted-foreground">
                       Jumlah Terkumpul
@@ -87,7 +81,7 @@ export default function ProposalCard() {
                     <NumberTicker
                       className="font-bold text-3xl"
                       value={parseFloat(
-                        formatUnits(BigInt(proposal.totalDonated), 2)
+                        formatUnits(BigInt(proposal.requestedAmount), 2)
                       )}
                     />
                     IDRX

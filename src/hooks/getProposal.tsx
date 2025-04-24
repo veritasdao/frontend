@@ -21,16 +21,13 @@ type ProposalCardType = {
   deadline: number;
   yesVotes: number;
   noVotes: number;
+  quorum: number;
   executed: boolean;
   approved: boolean;
-  quorum: number;
-  withdrawn: boolean;
-  rewardPool: number;
   totalYesPower: number;
   totalNoPower: number;
-  totalDonated: number;
-  voterCount: number;
-  donationCount: number;
+  tokenAddress: string;
+  distributed: boolean;
 };
 export default function useGetProposals() {
   const { data, isLoading, refetch } = useReadContract({
