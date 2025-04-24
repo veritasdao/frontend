@@ -64,7 +64,7 @@ export default function ProposalCard() {
                     className="rounded-md object-cover mb-3 aspect-video"
                     priority={true}
                   />
-                  <h2 className="text-lg font-semibold capitalize ine-clamp-2">
+                  <h2 className="text-lg font-semibold capitalize line-clamp-2">
                     {proposal.title}
                   </h2>
                   <p className="text-sm text-muted-foreground ">

@@ -42,6 +42,14 @@ export default function AppHeader() {
         >
           Jelajahi Proposal
         </Link>
+        <Link
+          href={"/proposal/staking"}
+          className={`text-sm text-muted-foreground hover:text-primary duration-300 ${
+            pathname === "/proposal/staking" ? "text-primary" : ""
+          }`}
+        >
+          Menabung Koin
+        </Link>
         {address && (
           <Link
             href={"/profile"}
