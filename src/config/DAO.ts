@@ -1,9 +1,12 @@
-export const DAOToken = "0x8091B8f8F75dBf234dbA4DfBd3608d232Bc05f49";
+export const DAOToken = "0xbE51Eec7DEe4E3d8c3478ED5094dDCaA7CC6BEe6";
 export const IDRXToken = "0xD63029C1a3dA68b51c67c6D1DeC3DEe50D681661";
 
 export const DAOABI = [
   {
-    inputs: [{ internalType: "address", name: "_idrx", type: "address" }],
+    inputs: [
+      { internalType: "address", name: "_idrx", type: "address" },
+      { internalType: "address", name: "_simpleSwap", type: "address" },
+    ],
     stateMutability: "nonpayable",
     type: "constructor",
   },
@@ -617,6 +620,13 @@ export const DAOABI = [
     type: "function",
   },
   {
+    inputs: [{ internalType: "uint256", name: "proposalId", type: "uint256" }],
+    name: "getTotalFundraising",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "address", name: "user", type: "address" }],
     name: "getUserSubProposals",
     outputs: [
@@ -723,6 +733,22 @@ export const DAOABI = [
     name: "renounceOwnership",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "simpleSwap",
+    outputs: [
+      { internalType: "contract SimpleSwap", name: "", type: "address" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    name: "totalFundraisingIDRX",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
     type: "function",
   },
   {

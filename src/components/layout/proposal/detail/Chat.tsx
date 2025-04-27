@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAccount } from "wagmi";
+import moment from "moment";
 
 interface Message {
   id: string;
@@ -21,7 +22,7 @@ export default function Chat({
 }: {
   messages: Message[];
 }) {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [newMessage, setNewMessage] = useState("");
 
@@ -72,7 +73,7 @@ export default function Chat({
   }, [messages]);
 
   return (
-    <div className="border border-[#1d4ed8] rounded">
+    <div className="border border-[#1d4ed8] rounded-md">
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="flex-1 p-4 h-[400px] xl:h-[450px]">
           <div className="space-y-4 max-w-3xl mx-auto">
@@ -83,12 +84,7 @@ export default function Chat({
                     {msg.sender.slice(0, 4)}...{msg.sender.slice(-4)}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {new Date(msg.timestamp).toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      hour12: true,
-                    })}
+                    {moment(msg.timestamp).fromNow()}
                   </span>
                 </div>
                 <Card className="p-3 max-w-[80%] bg-accent">
@@ -101,24 +97,26 @@ export default function Chat({
         </ScrollArea>
       </div>
 
-      <div className="p-4 border-t">
-        <div className="flex gap-2 max-w-3xl mx-auto">
-          <Input
-            placeholder="Type a message..."
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-            className="flex-1"
-          />
-          <Button
-            onClick={handleSendMessage}
-            disabled={!newMessage.trim()}
-            size={"icon"}
-          >
-            <Send className="h-4 w-4" />
-          </Button>
+      {isConnected && (
+        <div className="p-4 border-t">
+          <div className="flex gap-2 max-w-3xl mx-auto">
+            <Input
+              placeholder="Type a message..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+              className="flex-1"
+            />
+            <Button
+              onClick={handleSendMessage}
+              disabled={!newMessage.trim()}
+              size={"icon"}
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

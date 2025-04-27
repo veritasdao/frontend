@@ -1,57 +1,104 @@
 import React from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ClockArrowUp, Wallet, Zap } from "lucide-react";
+import { LoaderCircle, Wallet, Zap } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "./ui/button";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import moment from "moment";
-import { injected, useAccount, useConnect } from "wagmi";
+import {
+  injected,
+  useAccount,
+  useConnect,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
+import useGetBalance from "@/hooks/getBalance";
+import { formatUnits, parseUnits } from "viem";
+import { DAOABI, DAOToken, IDRXABI, IDRXToken } from "@/config/DAO";
+import Link from "next/link";
 
 type valueFormType = {
   amount: string;
-  duration: string;
+  // duration: string;
 };
 
-const DURATIONS = [
-  { label: "1 Bulan", value: "30" },
-  { label: "3 Bulan", value: "90" },
-  { label: "6 Bulan", value: "186" },
-  { label: "1 Tahun", value: "365" },
-];
+// const DURATIONS = [
+//   { label: "1 Bulan", value: "30" },
+//   { label: "3 Bulan", value: "90" },
+//   { label: "6 Bulan", value: "186" },
+//   { label: "1 Tahun", value: "365" },
+// ];
 
 moment.locale("id");
 
 export default function StakeForm() {
   const { address } = useAccount();
   const { connect } = useConnect();
+  const { balanceIDRX } = useGetBalance();
+
+  const {
+    data: hash,
+    writeContractAsync,
+    isPending,
+    isError,
+    isSuccess,
+    failureReason,
+  } = useWriteContract();
+
+  const {
+    isLoading: confirming,
+    isSuccess: confirmed,
+    isError: isReceiptError,
+    failureReason: receiptFailureReason,
+  } = useWaitForTransactionReceipt({
+    hash: hash,
+  });
 
   async function confirmStake(values: valueFormType) {
     console.log(Number(values.amount));
-    console.log(Number(values.duration));
+    // console.log(Number(values.duration));
+    try {
+      await writeContractAsync({
+        abi: IDRXABI,
+        address: IDRXToken,
+        functionName: "approve",
+        args: [DAOToken, parseUnits(values.amount || "0", 2)],
+      });
+      await writeContractAsync({
+        abi: DAOABI,
+        address: DAOToken,
+        functionName: "lockIDRX",
+        args: [parseUnits(values.amount || "0", 2)],
+      });
+    } catch (error) {
+      console.error("Error staking:", error);
+    }
   }
 
   const formik = useFormik({
     initialValues: {
       amount: "",
-      duration: "",
+      // duration: "",
     },
     validationSchema: Yup.object({
-      amount: Yup.number().required("Mohon mengisikan jumlah tabungan"),
-      duration: Yup.number().required("Mohon mengisikan durasi tabungan"),
+      amount: Yup.number()
+        .required("Mohon mengisikan jumlah tabungan")
+        .min(10000, "Jumlah tabungan minimal 10.000 IDRX"),
+      // duration: Yup.number().required("Mohon mengisikan durasi tabungan"),
     }),
     onSubmit: confirmStake,
   });
 
   // Helper to handle button selection
-  function handleDurationButton(days: string) {
-    formik.setFieldValue("duration", days);
-  }
+  // function handleDurationButton(days: string) {
+  //   formik.setFieldValue("duration", days);
+  // }
 
-  const formattedDuration = moment()
-    .add(Number(formik.values.duration), "days")
-    .format("LLLL");
+  // const formattedDuration = moment()
+  //   .add(Number(formik.values.duration), "days")
+  //   .format("LLLL");
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -62,14 +109,23 @@ export default function StakeForm() {
               <p>Jumlah</p>
               <div className="flex items-center gap-2">
                 <Wallet size={20} />
-                <p>0.1 IDRX</p>
+                {balanceIDRX ? (
+                  <p>
+                    {parseFloat(
+                      formatUnits(balanceIDRX as bigint, 2)
+                    ).toLocaleString()}{" "}
+                    IDRX
+                  </p>
+                ) : (
+                  "0 IDRX"
+                )}
               </div>
             </div>
             <div className="flex items-center relative">
               <Input
                 id="amount"
                 name="amount"
-                placeholder=""
+                placeholder="contoh: 10.000"
                 value={formik.values.amount}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -87,7 +143,7 @@ export default function StakeForm() {
             )}
           </section>
 
-          <section className="space-y-2">
+          {/* <section className="space-y-2">
             <p className="font-medium text-sm">Durasi menabung</p>
             <div className="flex items-center relative">
               <Input
@@ -123,21 +179,21 @@ export default function StakeForm() {
                 {formik.errors.duration}
               </div>
             )}
-          </section>
+          </section> */}
 
           <section className="text-sm text-muted-foreground space-y-2">
             <div className="flex items-center justify-between">
               <h1>IDRX untuk ditabung</h1>
-              <p>{formik.values.amount} IDRX</p>
+              <p>{parseFloat(formik.values.amount).toLocaleString()} IDRX</p>
             </div>
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <h1>Waktu mengambil tabungan</h1>
               <p>{formattedDuration}</p>
-            </div>
+            </div> */}
             <div className="flex items-center justify-between">
               <h1>Kekuatan/Hak suara</h1>
               <div className="flex items-center gap-1">
-                <p>{formik.values.amount}</p>
+                <p>{parseFloat(formik.values.amount).toLocaleString()}</p>
                 <Zap size={15} />
               </div>
             </div>
@@ -149,9 +205,32 @@ export default function StakeForm() {
               type="submit"
               size={"lg"}
               className="w-full"
-              disabled={!address}
+              disabled={
+                !address ||
+                isPending ||
+                confirming ||
+                confirmed ||
+                Number(formik.values.amount) < 10000 ||
+                Number(formik.values.amount) >
+                  Number(
+                    balanceIDRX ? formatUnits(balanceIDRX as bigint, 2) : "0"
+                  )
+              }
             >
-              Konfirmasi Menabung
+              {isPending ? (
+                <p className="flex gap-1">
+                  Mengkonfirmasi <LoaderCircle className="animate-spin" />
+                </p>
+              ) : Number(formik.values.amount) >
+                Number(
+                  balanceIDRX ? formatUnits(balanceIDRX as bigint, 2) : "0"
+                ) ? (
+                <p className="text-sm text-red-500">
+                  Jumlah tabungan melebihi saldo IDRX Anda
+                </p>
+              ) : (
+                "Konfirmasi Menabung"
+              )}
             </Button>
           ) : (
             <Button
@@ -166,6 +245,30 @@ export default function StakeForm() {
             </Button>
           )}
         </CardFooter>
+        <div className="max-w-5xl mx-auto text-center">
+          {confirmed && <p>Transaksi disetujui!</p>}
+          {isError && (
+            <p className="max-w-xl">Error: {failureReason?.toString()}</p>
+          )}
+          {isReceiptError && (
+            <p className="line-clamp-1">
+              Error: {receiptFailureReason?.toString()}
+            </p>
+          )}
+          {isSuccess && confirmed && <p>Transaksi telah dikonfimasi!</p>}
+          {isSuccess && !confirming && (
+            <div>
+              <Link
+                href={`https://sepolia-blockscout.lisk.com/tx/${hash}`}
+                target="_blank"
+              >
+                <Button type="button" variant={"outline"}>
+                  Lihat Detail Transaksi
+                </Button>
+              </Link>
+            </div>
+          )}
+        </div>
       </Card>
     </form>
   );

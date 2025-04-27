@@ -4,38 +4,33 @@ import Image from "next/image";
 import React from "react";
 import moment from "moment";
 import { formatUnits } from "viem";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { NumberTicker } from "./magicui/number-ticker";
-// import { useReadContract } from "wagmi";
-// import { DAOABI, DAOToken } from "@/config/DAO";
-
+import { useReadContract } from "wagmi";
+import { DAOABI, DAOToken } from "@/config/DAO";
+import StatusBadge from "./StatusBadge";
 export default function ProposalCard() {
   const { proposals, isLoading } = useGetProposals();
   // const proposal = proposals?.map((image) => image.image);
   // console.log(proposal);
-  // const [index, setIndex] = React.useState<number | null>(null);
+  const [index, setIndex] = React.useState<number | null>(null);
 
-  // React.useEffect(() => {
-  //   if (proposals && proposals.length > 0) {
-  //     setIndex(proposals.length - 1);
-  //   }
-  // }, [proposals]);
+  React.useEffect(() => {
+    if (proposals && proposals.length > 0) {
+      setIndex(proposals.length - 1);
+    }
+  }, [proposals]);
 
-  // const {
-  //   data: totalDonations,
-  //   isLoading: loadingTotalDonations,
-  //   refetch,
-  // } = useReadContract({
-  //   abi: DAOABI,
-  //   address: DAOToken,
-  //   functionName: "getTotalDonations",
-  //   args: [index],
-  // });
+  const { data: totalFundraising, refetch } = useReadContract({
+    abi: DAOABI,
+    address: DAOToken,
+    functionName: "getTotalFundraising",
+    args: [index],
+  });
 
-  // React.useEffect(() => {
-  //   refetch();
-  // }, [refetch]);
+  React.useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   return (
     <>
@@ -68,21 +63,26 @@ export default function ProposalCard() {
                     {proposal.title}
                   </h2>
                   <p className="text-sm text-muted-foreground ">
-                    creator: {proposal.proposer.slice(0, 5)}...
+                    pemilik: {proposal.proposer.slice(0, 5)}...
                     {proposal.proposer.slice(-5)}
                   </p>
                   <p className="line-clamp-2 mb-3 text-sm">
                     {proposal.description}
                   </p>
+                  <StatusBadge index={index} />
                   <div className="text-end">
                     <p className="text-xs text-muted-foreground">
-                      Jumlah Terkumpul
+                      Jumlah Penggalangan Dana
                     </p>
                     <NumberTicker
                       className="font-bold text-3xl"
-                      value={parseFloat(
-                        formatUnits(BigInt(proposal.requestedAmount), 2)
-                      )}
+                      value={
+                        totalFundraising
+                          ? parseFloat(
+                              formatUnits(BigInt(totalFundraising as bigint), 2)
+                            )
+                          : 0
+                      }
                     />
                     IDRX
                   </div>

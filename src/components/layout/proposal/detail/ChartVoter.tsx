@@ -28,18 +28,21 @@ const chartConfig = {
 
 export function ChartVoter({ index }: { index: number }) {
   const { voters } = useGetVoters(index) as {
-    voters: [string[], boolean[], string[], string[], number[]];
+    voters: Array<{
+      support: boolean;
+      voter: string;
+      votingPower: bigint;
+    }>;
   };
 
-  const formattedVoters =
-    voters && voters[0]
-      ? voters[0].map((_, i) => ({
-          address: voters[0][i],
-          support: voters[1][i],
-          amount: Number(formatUnits(BigInt(voters[2][i]), 2)),
-          date: moment(Number(voters[4][i]) * 1000).format("ll"),
-        }))
-      : [];
+  const formattedVoters = voters
+    ? voters.map((voter) => ({
+        address: voter.voter,
+        support: voter.support,
+        amount: Number(formatUnits(voter.votingPower, 2)),
+        date: moment().format("ll"), // Using current date since timestamp isn't provided in new format
+      }))
+    : [];
 
   // Grouping by date
   const grouped = formattedVoters.reduce<Record<string, number>>(
@@ -56,6 +59,28 @@ export function ChartVoter({ index }: { index: number }) {
     day,
     amountDay,
   }));
+
+  // Calculate trending percentage per day
+  const calculateTrendingPercentage = () => {
+    if (chartData.length < 2) return 0;
+
+    const firstValue = chartData[0].amountDay;
+    const lastValue = chartData[chartData.length - 1].amountDay;
+
+    if (firstValue === 0) return 0;
+
+    // Calculate daily change
+    const daysDiff = moment(chartData[chartData.length - 1].day).diff(
+      moment(chartData[0].day),
+      "days"
+    );
+    if (daysDiff === 0) return 0;
+
+    return (((lastValue - firstValue) / Math.abs(firstValue)) * 100) / daysDiff;
+  };
+
+  const trendingPercentage = calculateTrendingPercentage();
+  const isTrendingUp = trendingPercentage > 0;
 
   return (
     <Card className="bg-transparent border-[#1d4ed8]">
@@ -95,7 +120,13 @@ export function ChartVoter({ index }: { index: number }) {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          {isTrendingUp ? "Trending up" : "Trending down"} by{" "}
+          {Math.abs(trendingPercentage).toFixed(1)}% per day{" "}
+          {isTrendingUp ? (
+            <TrendingUp className="h-4 w-4" />
+          ) : (
+            <TrendingUp className="h-4 w-4 rotate-180" />
+          )}
         </div>
         <div className="leading-none text-muted-foreground">
           Showing total votes grouped by day

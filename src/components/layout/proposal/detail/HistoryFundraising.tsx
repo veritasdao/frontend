@@ -1,5 +1,5 @@
 "use client";
-import useGetVoters from "@/hooks/getVoters";
+import useGetDonates from "@/hooks/getDonates";
 import React from "react";
 import {
   Card,
@@ -16,30 +16,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { formatUnits } from "viem";
 import moment from "moment";
+import { formatUnits } from "viem";
 
-export default function HistoryVote({ index }: { index: number }) {
-  const { voters } = useGetVoters(index) as {
-    voters: Array<{
-      support: boolean;
-      voter: string;
-      votingPower: bigint;
+export default function HistoryFundraising({ index }: { index: number }) {
+  const { donates } = useGetDonates(index) as {
+    donates: Array<{
+      address: string;
+      amount: bigint;
       timestamp: bigint;
     }>;
   };
 
-  if (!voters || voters.length === 0) {
+  if (!donates || donates.length === 0) {
     return (
       <Card className="bg-transparent border-[#1d4ed8]">
         <CardHeader>
-          <CardTitle>Voting History</CardTitle>
-          <CardDescription>Recent voting activities</CardDescription>
+          <CardTitle>Donation History</CardTitle>
+          <CardDescription>Recent donation activities</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-center text-muted-foreground">
-            No voting history yet
+            No donation history yet
           </p>
         </CardContent>
       </Card>
@@ -49,8 +47,8 @@ export default function HistoryVote({ index }: { index: number }) {
   return (
     <Card className="bg-transparent border-[#1d4ed8]">
       <CardHeader>
-        <CardTitle>Voting History</CardTitle>
-        <CardDescription>Recent voting activities</CardDescription>
+        <CardTitle>Donation History</CardTitle>
+        <CardDescription>Recent donation activities</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
@@ -58,31 +56,23 @@ export default function HistoryVote({ index }: { index: number }) {
             <TableRow>
               <TableHead>Address</TableHead>
               <TableHead>Time</TableHead>
-              <TableHead>Status</TableHead>
               <TableHead className="text-right">Amount</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {voters.map((voter, i) => {
-              const formatedAmount = parseFloat(
-                formatUnits(voter.votingPower, 2)
-              ).toLocaleString();
+            {donates.map((donate, i) => {
+              const formatedAmount = formatUnits(donate.amount, 2);
               const formatedDate = moment(
-                Number(voter.timestamp) * 1000
+                Number(donate.timestamp) * 1000
               ).format("LLLL");
 
               return (
                 <TableRow key={i}>
                   <TableCell className="font-medium">
-                    {String(voter.voter).slice(0, 5)}...
-                    {String(voter.voter).slice(-5)}
+                    {String(donate.address).slice(0, 5)}...
+                    {String(donate.address).slice(-5)}
                   </TableCell>
                   <TableCell className="font-medium">{formatedDate}</TableCell>
-                  <TableCell>
-                    <Badge variant={voter.support ? "default" : "destructive"}>
-                      {voter.support ? "Yes" : "No"}
-                    </Badge>
-                  </TableCell>
                   <TableCell className="text-right text-xl">
                     {formatedAmount} <span className="text-sm">IDRX</span>
                   </TableCell>

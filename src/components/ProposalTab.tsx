@@ -2,7 +2,7 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Detail from "./layout/proposal/detail/Detail";
 import HistoryVote from "./layout/proposal/detail/HistoryVote";
-import HistoryDonate from "./layout/proposal/detail/HIstoryDonate";
+import HistoryDonate from "./layout/proposal/detail/HistoryFundraising";
 
 export default function ProposalTab({ index }: { index: number }) {
   return (

@@ -10,8 +10,6 @@ export default function useGetBalance() {
     address: address,
   });
 
-  console.log(balanceNative);
-
   const { data: balanceIDRX, refetch: refetchBalanceIDRX } = useReadContract({
     address: IDRXToken,
     abi: IDRXABI,

@@ -66,7 +66,7 @@ export default function Detail({ index }: { index: number }) {
           <h2 className="text-2xl font-bold text-[#3b82f6]">
             Dampak dan Hasil
           </h2>
-          <p>{proposal?.dampak_dan_hasil}</p>
+          <p>{proposal?.dampakdanhasil}</p>
         </div>
 
         <div>
@@ -78,8 +78,8 @@ export default function Detail({ index }: { index: number }) {
             <div className="flex items-center gap-2">
               <BookUser />
               <p>Pemilik proposal:</p>
-              <LinkPreview url={`${proposal?.ownerlink}`}>
-                <span className="text-[#3b82f6]">{proposal?.ownerlink}</span>
+              <LinkPreview url={`${proposal?.ownerLink}`}>
+                <span className="text-[#3b82f6]">{proposal?.ownerLink}</span>
               </LinkPreview>
             </div>
             <div className="flex items-center gap-2">

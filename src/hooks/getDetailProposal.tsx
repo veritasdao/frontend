@@ -9,7 +9,7 @@ type ProposalDetailType = {
   image: string;
   github: string;
   whitepaper: string;
-  ownerlink: string;
+  ownerLink: string;
   description: string;
   motivasi: string;
   rincian: string;
@@ -97,12 +97,11 @@ export default function useGetDetailProposals(index: number) {
   //       // donationCount: (data as unknown as ProposalRawData)[25],
   //     }
   //   : null;
+  const proposal = data as ProposalDetailType;
 
   React.useEffect(() => {
     refetch();
   }, [refetch]);
-
-  const proposal = data as ProposalDetailType[]; // ✅ cast ke tipe yang tepa
 
   return {
     proposal,

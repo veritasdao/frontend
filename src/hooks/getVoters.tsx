@@ -36,6 +36,8 @@ export default function useGetVoters(index: number) {
 
   // const proposals = data as ProposalDetailType[]; // ✅ cast ke tipe yang tepa
 
+  console.log(voters);
+
   React.useEffect(() => {
     refetch();
   }, [refetch]);

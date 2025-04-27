@@ -12,7 +12,7 @@ import {
   useWriteContract,
 } from "wagmi";
 
-export default function Donate({ index }: { index: number }) {
+export default function Fundraising({ index }: { index: number }) {
   const { address } = useAccount();
   const [amount, setAmount] = React.useState<string>("");
 
@@ -45,7 +45,7 @@ export default function Donate({ index }: { index: number }) {
       await writeContractAsync({
         abi: DAOABI,
         address: DAOToken,
-        functionName: "donate",
+        functionName: "fundraising",
         args: [index, parseUnits(amount || "0", 2)],
       });
     } catch (error) {
@@ -93,7 +93,7 @@ export default function Donate({ index }: { index: number }) {
             Mengkonfirmasi <LoaderCircle className="animate-spin" />
           </p>
         ) : (
-          "Konfirmasi Donasi"
+          "Konfirmasi Fundraising"
         )}
       </Button>
 

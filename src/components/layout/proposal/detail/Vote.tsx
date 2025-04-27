@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DAOABI, DAOToken, IDRXABI, IDRXToken } from "@/config/DAO";
-import { LoaderCircle, Wallet } from "lucide-react";
+import useGetVotingPower from "@/hooks/getVotingPower";
+import { LoaderCircle, Zap } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { formatUnits, parseUnits } from "viem";
@@ -69,12 +70,8 @@ export default function Vote({ index }: { index: number }) {
     }
   }
 
-  const { data: balanceIDRX } = useReadContract({
-    abi: IDRXABI,
-    address: IDRXToken,
-    functionName: "balanceOf",
-    args: [address],
-  });
+  const { balanceVotingPower } = useGetVotingPower();
+
   return (
     <div className="border p-5 rounded-md space-y-3">
       <div className="grid grid-cols-2 gap-5">
@@ -92,20 +89,19 @@ export default function Vote({ index }: { index: number }) {
         </Button>
       </div>
       <div className="flex justify-between">
-        <p>Jumlah (IDRX)</p>
-        {balanceIDRX ? (
+        <p>Jumlah (Hak Suara)</p>
+        {balanceVotingPower ? (
           <p className="text-muted-foreground flex gap-1">
-            <Wallet strokeWidth={1} />
             <span className="font-bold">
               {parseFloat(
-                formatUnits(BigInt(balanceIDRX as bigint), 2)
+                formatUnits(BigInt(balanceVotingPower as bigint), 2)
               ).toLocaleString()}
             </span>{" "}
-            IDRX
+            <Zap strokeWidth={1} />
           </p>
         ) : (
           <p className="text-muted-foreground flex gap-1">
-            <Wallet /> 0 IDRX
+            0 <Zap strokeWidth={1} />
           </p>
         )}
       </div>
@@ -115,9 +111,6 @@ export default function Vote({ index }: { index: number }) {
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
-        <p className="text-sm text-muted-foreground mt-2 font-medium">
-          1 IDRX = 1 Suara
-        </p>
       </div>
       <Button
         onClick={sendDonation}
