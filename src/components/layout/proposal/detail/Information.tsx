@@ -40,7 +40,7 @@ export default function Information({ index }: { index: number }) {
           alt="Proposal Image "
           width={100}
           height={100}
-          className="rounded-md object-cover mb-3 aspect-square"
+          className="rounded-md object-cover mb-3 aspect-square border border-[#1d4ed8]"
         />
         <div>
           <h1 className="text-3xl font-bold">{proposal?.title}</h1>

@@ -1,6 +1,6 @@
 "use client";
-import StakeClaim from "@/components/StakeClaim";
-import StakeForm from "@/components/StakeForm";
+import StakeClaim from "@/components/layout/staking/StakeClaim";
+import StakeForm from "@/components/layout/staking/StakeForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
 

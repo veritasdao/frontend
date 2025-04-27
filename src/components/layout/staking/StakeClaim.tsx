@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { LoaderCircle, Wallet, Zap } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "./ui/button";
+import { Button } from "../../ui/button";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import moment from "moment";
@@ -18,6 +18,8 @@ import useGetBalance from "@/hooks/getBalance";
 import { formatUnits, parseUnits } from "viem";
 import { DAOABI, DAOToken, IDRXABI, IDRXToken } from "@/config/DAO";
 import Link from "next/link";
+import useGetLocked from "@/hooks/getLocked";
+import useGetVotingPower from "@/hooks/getVotingPower";
 
 type valueFormType = {
   amount: string;
@@ -33,10 +35,12 @@ type valueFormType = {
 
 moment.locale("id");
 
-export default function StakeForm() {
+export default function StakeClaim() {
   const { address } = useAccount();
   const { connect } = useConnect();
   const { balanceIDRX } = useGetBalance();
+  const { locked } = useGetLocked(address as string);
+  const { balanceVotingPower } = useGetVotingPower();
 
   const {
     data: hash,
@@ -56,9 +60,7 @@ export default function StakeForm() {
     hash: hash,
   });
 
-  async function confirmStake(values: valueFormType) {
-    console.log(Number(values.amount));
-    // console.log(Number(values.duration));
+  async function confirmClaim(values: valueFormType) {
     try {
       await writeContractAsync({
         abi: IDRXABI,
@@ -69,7 +71,7 @@ export default function StakeForm() {
       await writeContractAsync({
         abi: DAOABI,
         address: DAOToken,
-        functionName: "lockIDRX",
+        functionName: "unlockIDRX",
         args: [parseUnits(values.amount || "0", 2)],
       });
     } catch (error) {
@@ -84,11 +86,11 @@ export default function StakeForm() {
     },
     validationSchema: Yup.object({
       amount: Yup.number()
-        .required("Mohon mengisikan jumlah tabungan")
-        .min(10000, "Jumlah tabungan minimal 10.000 IDRX"),
+        .required("Mohon mengisikan jumlah tabungan yang ingin diambil")
+        .min(10000, "Jumlah minimal 10.000 IDRX"),
       // duration: Yup.number().required("Mohon mengisikan durasi tabungan"),
     }),
-    onSubmit: confirmStake,
+    onSubmit: confirmClaim,
   });
 
   // Helper to handle button selection
@@ -100,19 +102,21 @@ export default function StakeForm() {
   //   .add(Number(formik.values.duration), "days")
   //   .format("LLLL");
 
+  const afterVotingPower = balanceVotingPower ? Number(formatUnits(balanceVotingPower as bigint, 2)) - Number(formik.values.amount) : 0;
+  const afterLocked = locked ? Number(formatUnits(locked as bigint, 2)) - Number(formik.values.amount) : 0;
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <Card>
         <CardContent className="space-y-5">
           <section className="space-y-2">
             <div className="flex justify-between font-medium text-sm">
-              <p>Jumlah</p>
+              <p>Jumlah Tabungan</p>
               <div className="flex items-center gap-2">
-                <Wallet size={20} />
-                {balanceIDRX ? (
+                {locked ? (
                   <p>
                     {parseFloat(
-                      formatUnits(balanceIDRX as bigint, 2)
+                      formatUnits(locked as bigint, 2)
                     ).toLocaleString()}{" "}
                     IDRX
                   </p>
@@ -183,17 +187,17 @@ export default function StakeForm() {
 
           <section className="text-sm text-muted-foreground space-y-2">
             <div className="flex items-center justify-between">
-              <h1>IDRX untuk ditabung</h1>
-              <p>{parseFloat(formik.values.amount).toLocaleString()} IDRX</p>
+              <h1>IDRX yang tersisa</h1>
+              <p>{afterLocked.toLocaleString()} IDRX</p>
             </div>
             {/* <div className="flex items-center justify-between">
               <h1>Waktu mengambil tabungan</h1>
               <p>{formattedDuration}</p>
             </div> */}
             <div className="flex items-center justify-between">
-              <h1>Kekuatan/Hak suara</h1>
+              <h1>Kekuatan/Hak suara yang tersisa</h1>
               <div className="flex items-center gap-1">
-                <p>{parseFloat(formik.values.amount).toLocaleString()}</p>
+                <p>{afterVotingPower.toLocaleString()}</p>
                 <Zap size={15} />
               </div>
             </div>
@@ -229,7 +233,7 @@ export default function StakeForm() {
                   Jumlah tabungan melebihi saldo IDRX Anda
                 </p>
               ) : (
-                "Konfirmasi Menabung"
+                "Konfirmasi Ambil Tabungan"
               )}
             </Button>
           ) : (

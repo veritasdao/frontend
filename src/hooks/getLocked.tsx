@@ -22,16 +22,16 @@ import { useReadContract } from "wagmi";
 //   totalNoPower: number;
 //   //   totalDonated: number;
 // };
-export default function useGetVoters(index: number) {
+export default function useGetLocked(address: string) {
   const {
-    data: voters,
+    data: locked,
     isLoading,
     refetch,
   } = useReadContract({
     abi: DAOABI,
     address: DAOToken,
-    functionName: "getVoters",
-    args: [index], // Ganti dengan index proposal yang sesuai
+    functionName: "lockedIDRX",
+    args: [address], // Ganti dengan index proposal yang sesuai
   });
 
   // const proposals = data as ProposalDetailType[]; // ✅ cast ke tipe yang tepa
@@ -42,7 +42,7 @@ export default function useGetVoters(index: number) {
   }, [refetch]);
 
   return {
-    voters,
+    locked,
     isLoading,
   };
 }
