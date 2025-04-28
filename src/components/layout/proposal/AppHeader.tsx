@@ -40,7 +40,7 @@ export default function AppHeader() {
             pathname === "/proposal" ? "text-primary" : ""
           }`}
         >
-          Jelajahi Proposal
+          Jelajahi Komunitas
         </Link>
         <Link
           href={"/proposal/staking"}

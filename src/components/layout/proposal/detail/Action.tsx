@@ -5,6 +5,7 @@ import useGetDetailProposals from "@/hooks/getDetailProposal";
 import TabAction from "./TabAction";
 import useGetTotalFundraising from "@/hooks/getTotalFundraising";
 import StatusBar from "@/components/StatusBar";
+import { Card } from "@/components/ui/card";
 
 export default function Action({ index }: { index: number }) {
   const { proposal, isLoading } = useGetDetailProposals(index);
@@ -15,7 +16,7 @@ export default function Action({ index }: { index: number }) {
 
   if (isLoading) return <p>Loading...</p>;
   return (
-    <section className="border border-[#1d4ed8] p-5 rounded-md space-y-7 h-fit">
+    <Card className=" p-5 rounded-md h-fit">
       <StatusBar index={index} />
       <React.Fragment key={index}>
         <Amount
@@ -31,6 +32,6 @@ export default function Action({ index }: { index: number }) {
         <hr />
         <TabAction index={index} />
       </React.Fragment>
-    </section>
+    </Card>
   );
 }

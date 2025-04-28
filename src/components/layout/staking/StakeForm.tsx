@@ -42,7 +42,6 @@ export default function StakeForm() {
     data: hash,
     writeContractAsync,
     isPending,
-    isError,
     isSuccess,
     failureReason,
   } = useWriteContract();
@@ -245,7 +244,7 @@ export default function StakeForm() {
         </CardFooter>
         <div className="max-w-5xl mx-auto text-center">
           {confirmed && <p>Transaksi disetujui!</p>}
-          {isError && (
+          {failureReason && (
             <p className="max-w-xl">Error: {failureReason?.toString()}</p>
           )}
           {isReceiptError && (
