@@ -40,6 +40,14 @@ export default function AppHeader() {
             pathname === "/proposal" ? "text-primary" : ""
           }`}
         >
+          Jelajahi Proposal
+        </Link>
+        <Link
+          href={"/community"}
+          className={`text-sm text-muted-foreground hover:text-primary duration-300 ${
+            pathname === "/community" ? "text-primary" : ""
+          }`}
+        >
           Jelajahi Komunitas
         </Link>
         <Link

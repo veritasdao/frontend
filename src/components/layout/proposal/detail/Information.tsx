@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React from "react";
 // import { useReadContract } from "wagmi";
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useGetDetailProposals from "@/hooks/getDetailProposal";
 
 export default function Information({ index }: { index: number }) {
@@ -34,27 +34,30 @@ export default function Information({ index }: { index: number }) {
   return (
     <section>
       {isLoading && <p>Loading...</p>}
-      <div className="flex gap-5">
+      <div className="flex items-start gap-5">
         <Image
           src={proposal?.image || "/placeholder.jpg"}
           alt="Proposal Image "
           width={100}
           height={100}
-          className="rounded-md object-cover mb-3 aspect-square border border-[#1d4ed8]"
+          className="rounded-md object-cover mb-3 aspect-square bg-secondary"
         />
-        <div>
+        <div className="space-y-2">
           <h1 className="text-3xl font-bold">{proposal?.title}</h1>
-          <div className="flex items-center gap-2">
-            <p className="text-sm text-muted-foreground">Pemilik Proposal:</p>
+          <div className="">
+            <p className="text-sm text-muted-foreground">Pembuat Proposal</p>
             <div className="flex items-center gap-2">
-              {/* <Avatar>
+              <Avatar>
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>CN</AvatarFallback>
-              </Avatar> */}
-              <p className="text-sm text-muted-foreground ">
-                {proposal?.proposer.slice(0, 5)}...
-                {proposal?.proposer.slice(-5)}
-              </p>
+              </Avatar>
+              <div>
+                <p className="text-sm font-medium">@KayzDev</p>
+                <p className="text-xs">
+                  {proposal?.proposer.slice(0, 5)}...
+                  {proposal?.proposer.slice(-5)}
+                </p>
+              </div>
             </div>
           </div>
         </div>

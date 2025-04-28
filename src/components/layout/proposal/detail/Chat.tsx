@@ -125,34 +125,36 @@ export default function Chat({
           </div>
         </ScrollArea>
       </div>
-      <hr />
       {isConnected && (
-        <div className="">
-          <div className="flex gap-2 max-w-3xl mx-auto">
-            <Input
-              placeholder="Tulis pesan..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={(e) =>
-                e.key === "Enter" && !e.shiftKey && handleSendMessage()
-              }
-              className="flex-1"
-              disabled={isSending}
-            />
-            <Button
-              onClick={handleSendMessage}
-              disabled={!newMessage.trim() || isSending}
-              size="icon"
-              className="shrink-0"
-            >
-              {isSending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
-            </Button>
+        <>
+          <hr />
+          <div>
+            <div className="flex gap-2 max-w-3xl mx-auto">
+              <Input
+                placeholder="Tulis pesan..."
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && !e.shiftKey && handleSendMessage()
+                }
+                className="flex-1"
+                disabled={isSending}
+              />
+              <Button
+                onClick={handleSendMessage}
+                disabled={!newMessage.trim() || isSending}
+                size="icon"
+                className="shrink-0"
+              >
+                {isSending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </Card>
   );
