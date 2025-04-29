@@ -1,7 +1,6 @@
 import BackButton from "@/components/BackButton";
 import Action from "@/components/layout/proposal/detail/Action";
 import { ChartVoter } from "@/components/layout/proposal/detail/ChartVoter";
-import Chat from "@/components/layout/proposal/detail/Chat";
 import Information from "@/components/layout/proposal/detail/Information";
 import TokenInfo from "@/components/layout/proposal/detail/TokenInfo";
 import ProposalTab from "@/components/ProposalTab";

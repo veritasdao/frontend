@@ -54,6 +54,7 @@ export default function Chat({
         )
       );
     } catch (error) {
+      console.log(error);
       setMessages((prevMessages) =>
         prevMessages.map((msg) =>
           msg.id === messageData.id ? { ...msg, status: "error" } : msg

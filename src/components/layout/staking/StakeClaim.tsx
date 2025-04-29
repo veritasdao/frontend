@@ -102,8 +102,13 @@ export default function StakeClaim() {
   //   .add(Number(formik.values.duration), "days")
   //   .format("LLLL");
 
-  const afterVotingPower = balanceVotingPower ? Number(formatUnits(balanceVotingPower as bigint, 2)) - Number(formik.values.amount) : 0;
-  const afterLocked = locked ? Number(formatUnits(locked as bigint, 2)) - Number(formik.values.amount) : 0;
+  const afterVotingPower = balanceVotingPower
+    ? Number(formatUnits(balanceVotingPower as bigint, 2)) -
+      Number(formik.values.amount)
+    : 0;
+  const afterLocked = locked
+    ? Number(formatUnits(locked as bigint, 2)) - Number(formik.values.amount)
+    : 0;
 
   return (
     <form onSubmit={formik.handleSubmit}>
