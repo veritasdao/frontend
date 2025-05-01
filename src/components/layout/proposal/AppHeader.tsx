@@ -26,14 +26,14 @@ export default function AppHeader() {
         <Link href={"/"} className="text-2xl font-bold">
           Veritas
         </Link>
-        <Link
+        {/* <Link
           href={"/proposal/create"}
           className={`text-sm text-muted-foreground hover:text-primary duration-300 ${
             pathname === "/proposal/create" ? "text-primary" : ""
           }`}
         >
           Buat Proposal
-        </Link>
+        </Link> */}
         <Link
           href={"/proposal"}
           className={`text-sm text-muted-foreground hover:text-primary duration-300 ${

@@ -19,7 +19,7 @@ type statusProposalRawData = [
   boolean, // hasMetQuorum
   number // timeLeft
 ];
-export default function useGetStatusProposal(index: number) {
+export default function useGetStatusProposal(index: number | null) {
   const { data, isLoading, refetch } = useReadContract({
     abi: DAOABI,
     address: DAOToken,
