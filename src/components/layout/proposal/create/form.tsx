@@ -84,22 +84,24 @@ export default function Form() {
           abi: DAOABI,
           address: DAOToken,
           functionName: "createCommunityProposal",
-          args: [{
-            title: values.title,
-            image: signedUrl,
-            github: values.github,
-            whitepaper: values.whitepaper,
-            ownerLink: values.ownerLink,
-            description: values.description,
-            motivasi: values.motivasi,
-            rincian: values.rincian,
-            keuntungan: values.keuntungan,
-            tantangan: values.tantangan,
-            dampakdanhasil: values.dampak_dan_hasil,
-            requestedAmount: parseUnits(values.amount.toString(), 2),
-            deadline: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60),
-            quorum: parseUnits("27500000", 2)
-          }],
+          args: [
+            {
+              title: values.title,
+              image: signedUrl,
+              github: values.github,
+              whitepaper: values.whitepaper,
+              ownerLink: values.ownerLink,
+              description: values.description,
+              motivasi: values.motivasi,
+              rincian: values.rincian,
+              keuntungan: values.keuntungan,
+              tantangan: values.tantangan,
+              dampakdanhasil: values.dampak_dan_hasil,
+              requestedAmount: parseUnits(values.amount.toString(), 2),
+              deadline: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+              quorum: parseUnits("27500000", 2),
+            },
+          ],
         });
       } else {
         toast("Foto belum tersimpan");

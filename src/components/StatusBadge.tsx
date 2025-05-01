@@ -39,11 +39,8 @@ export default function StatusBadge({ index }: StatusBadgeProps) {
 
     // Case 3: Ditolak
     if (
-      !statusProposal.isActive &&
-      !statusProposal.isExecuted &&
-      !statusProposal.hasMetQuorum &&
-      statusProposal.timeLeft <= 0 &&
-      proposal.noVotes > proposal.yesVotes
+      (!statusProposal.isActive && !statusProposal.isApproved) ||
+      (statusProposal.timeLeft <= 0 && proposal.noVotes > proposal.yesVotes)
     ) {
       return "Ditolak";
     }

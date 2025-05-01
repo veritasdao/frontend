@@ -23,6 +23,12 @@ export default function FormProfile() {
   };
   return (
     <section className="flex flex-col justify-center max-w-md mx-auto h-[calc(100vh-10rem)] gap-5">
+      <div>
+        <h1 className="text-3xl font-bold">Create your profile</h1>
+        <h2 className="text-gray-500">
+          Create your profile to start investing in the best projects
+        </h2>
+      </div>
       <div className="space-y-2">
         <Label>Profile Image</Label>
         <Input type="file" accept="image/*" onChange={handleImageChange} />
