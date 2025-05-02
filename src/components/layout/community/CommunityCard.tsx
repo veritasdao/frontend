@@ -38,7 +38,7 @@ export default function CommunityCard() {
         {filteredProposals.map((proposal, index: number) => {
           return (
             <Link
-              href={`/proposal/${proposals.length - 1 - index}`}
+              href={`/community/${proposals.length - 1 - index}`}
               key={index}
             >
               <Card className="hover:bg-secondary/20 duration-300">

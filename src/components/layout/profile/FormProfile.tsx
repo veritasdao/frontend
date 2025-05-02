@@ -21,6 +21,8 @@ export default function FormProfile() {
       setPreview(null);
     }
   };
+
+  console.log(image);
   return (
     <section className="flex flex-col justify-center max-w-md mx-auto h-[calc(100vh-10rem)] gap-5">
       <div>
