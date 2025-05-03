@@ -6,6 +6,7 @@ import TabAction from "./TabAction";
 import useGetTotalFundraising from "@/hooks/getTotalFundraising";
 import StatusBar from "@/components/StatusBar";
 import { Card } from "@/components/ui/card";
+import InteractProposal from "./InteractProposal";
 
 export default function Action({ index }: { index: number }) {
   const { proposal, isLoading } = useGetDetailProposals(index);
@@ -18,6 +19,7 @@ export default function Action({ index }: { index: number }) {
   return (
     <Card className=" p-5 rounded-md h-fit">
       <StatusBar index={index} />
+      <InteractProposal index={index} />
       <React.Fragment key={index}>
         <Amount
           requestedAmount={

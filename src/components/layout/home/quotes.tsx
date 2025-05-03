@@ -8,12 +8,12 @@ export default function Quotes() {
   return (
     <section className="text-center space-y-10">
       <SparklesText>
-        &quot;Dalam dunia digital, kontribusi terbaik adalah yang dibuka untuk
-        semua dan berdampak bagi banyak.&quot;
+        &quot;In the digital world, the best contribution is one that is open to
+        all and impacts many.&quot;
       </SparklesText>
       <h1 className="text-2xl xl:hidden font-bold mb-4">
-        &quot;Dalam dunia digital, kontribusi terbaik adalah yang dibuka untuk
-        semua dan berdampak bagi banyak.&quot;
+        &quot;In the digital world, the best contribution is one that is open to
+        all and impacts many.&quot;
       </h1>
       <h2 className="text-xl">
         <strong>Vitalik Buterin</strong> - Co-founder of Ethereum
@@ -24,7 +24,7 @@ export default function Quotes() {
           className="shadow-xl shadow-[#1d4ed8] relative px-10 py-6 text-lg"
           variant={"outline"}
         >
-          Mulai Sekarang
+          Getting Started
           <BorderBeam
             duration={5}
             size={80}

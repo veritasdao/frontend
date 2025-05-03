@@ -15,7 +15,7 @@ export default function StatusBadge({ index }: StatusBadgeProps) {
   const getStatus = () => {
     if (!statusProposal || !proposal) return "Loading...";
 
-    // Case 1: Pemilihan
+    // Case 1: Voting Phase
     if (
       statusProposal.isActive &&
       !statusProposal.isExecuted &&
@@ -25,7 +25,17 @@ export default function StatusBadge({ index }: StatusBadgeProps) {
       return "Voting";
     }
 
-    // Case 2: Fundraising
+    // Case 2: Check if voting ended unsuccessfully
+    if (
+      statusProposal.timeLeft <= 0 &&
+      !statusProposal.isExecuted &&
+      !statusProposal.isApproved &&
+      proposal.noVotes > proposal.yesVotes
+    ) {
+      return "Rejected";
+    }
+
+    // Case 3: Fundraising Phase
     if (
       !statusProposal.isActive &&
       statusProposal.isExecuted &&
@@ -36,9 +46,13 @@ export default function StatusBadge({ index }: StatusBadgeProps) {
       return "Fundraising";
     }
 
-    // Case 3: Rejected
-    if (statusProposal.timeLeft <= 0 && proposal.noVotes > proposal.yesVotes) {
-      return "Rejected";
+    // Case 4: Final Status (Approved or Rejected)
+    if (statusProposal.timeLeft <= 0) {
+      if (proposal.yesVotes > proposal.noVotes) {
+        return "Approved";
+      } else {
+        return "Rejected";
+      }
     }
 
     return "Loading...";
@@ -52,6 +66,9 @@ export default function StatusBadge({ index }: StatusBadgeProps) {
       color = "outline"; // yellow (custom)
       break;
     case "Fundraising":
+      color = "default"; // green (custom)
+      break;
+    case "Approved":
       color = "default"; // green (custom)
       break;
     case "Rejected":

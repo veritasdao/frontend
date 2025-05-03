@@ -53,7 +53,7 @@ export function AvatarUser() {
         <AnimatedTooltip items={people} />
       </div>
       <p className="text-sm font-medium text-muted-foreground">
-        1000+ Active Web3 User
+        <span className="font-bold">1000+</span> Active Web3 Builders and Users
       </p>
     </div>
   );

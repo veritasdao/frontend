@@ -15,7 +15,7 @@ export default function StatusBar({ index }: StatusBarProps) {
   const getStatus = () => {
     if (!statusProposal || !proposal) return "Loading...";
 
-    // Case 1: Pemilihan
+    // Case 1: Voting
     if (
       statusProposal.isActive &&
       !statusProposal.isExecuted &&
@@ -25,7 +25,7 @@ export default function StatusBar({ index }: StatusBarProps) {
       return "Voting";
     }
 
-    // Case 2: Fundraising
+    // Case 2: Fundraising (only if voting was successful)
     if (
       !statusProposal.isActive &&
       statusProposal.isExecuted &&
@@ -36,9 +36,13 @@ export default function StatusBar({ index }: StatusBarProps) {
       return "Fundraising";
     }
 
-    // Case 3: Rejected
-    if (statusProposal.timeLeft <= 0 && proposal.noVotes > proposal.yesVotes) {
-      return "Rejected";
+    // Case 3: Final Stage (Approved or Rejected)
+    if (statusProposal.timeLeft <= 0) {
+      if (proposal.yesVotes > proposal.noVotes) {
+        return "Approved";
+      } else {
+        return "Rejected";
+      }
     }
 
     return "Loading...";
@@ -48,15 +52,8 @@ export default function StatusBar({ index }: StatusBarProps) {
 
   const stages = [
     { id: "voting", label: "Voting" },
-    {
-      id: "final",
-      label:
-        status === "Voting"
-          ? "Final"
-          : status === "Fundraising"
-          ? "Fundraising"
-          : "Rejected",
-    },
+    { id: "fundraising", label: "Fundraising" },
+    { id: "final", label: "Final" },
   ];
 
   const getStageStatus = (stageId: string) => {
@@ -64,9 +61,19 @@ export default function StatusBar({ index }: StatusBarProps) {
       case "Voting":
         return stageId === "voting" ? "active" : "pending";
       case "Fundraising":
-        return stageId === "final" ? "approved" : "completed";
+        return stageId === "fundraising"
+          ? "active"
+          : stageId === "voting"
+          ? "completed"
+          : "pending";
+      case "Approved":
+        return stageId === "final" ? "completed" : "completed";
       case "Rejected":
-        return stageId === "final" ? "rejected" : "inactive";
+        return stageId === "final"
+          ? "rejected"
+          : stageId === "voting"
+          ? "completed"
+          : "inactive";
       default:
         return "inactive";
     }
@@ -83,8 +90,6 @@ export default function StatusBar({ index }: StatusBarProps) {
                 getStageStatus(stage.id) === "active" &&
                   "bg-primary text-primary-foreground",
                 getStageStatus(stage.id) === "completed" &&
-                  "bg-green-500 text-white",
-                getStageStatus(stage.id) === "approved" &&
                   "bg-green-500 text-white",
                 getStageStatus(stage.id) === "rejected" &&
                   "bg-destructive text-destructive-foreground",
@@ -105,8 +110,9 @@ export default function StatusBar({ index }: StatusBarProps) {
         <div
           className={cn(
             "absolute top-0 left-0 h-1 transition-all duration-300",
-            status === "Voting" && "w-1/2 bg-primary",
-            (status === "Fundraising" || status === "Rejected") &&
+            status === "Voting" && "w-1/3 bg-primary",
+            status === "Fundraising" && "w-2/3 bg-primary",
+            (status === "Approved" || status === "Rejected") &&
               "w-full bg-primary"
           )}
         />

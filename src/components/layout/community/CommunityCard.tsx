@@ -18,17 +18,19 @@ export default function CommunityCard() {
 
   const filteredProposals = React.useMemo(() => {
     if (!proposals) return [];
-    return proposals.sort((a, b) => Number(b.deadline) - Number(a.deadline));
+    return proposals.sort(
+      (a, b) => Number(b.votingDeadline) - Number(a.votingDeadline)
+    );
   }, [proposals]);
 
   return (
     <>
       <div className="space-y-3">
         <h1 className="text-xl text-muted-foreground">
-          Menampilkan{" "}
+          Showing{" "}
           {filteredProposals && (
             <strong className="text-primary">
-              {filteredProposals.length} Komunitas
+              {filteredProposals.length} Communities
             </strong>
           )}
         </h1>

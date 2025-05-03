@@ -85,8 +85,8 @@ export function ChartVoter({ index }: { index: number }) {
   return (
     <Card className="bg-transparent border-[#1d4ed8]">
       <CardHeader>
-        <CardTitle>Voter Indikator</CardTitle>
-        <CardDescription>Grafik dalam 1D (1 Day)</CardDescription>
+        <CardTitle>Voter Indicator</CardTitle>
+        <CardDescription>Chart in 1D (1 Day)</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>

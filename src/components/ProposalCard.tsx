@@ -55,17 +55,26 @@ export default function ProposalCard() {
         // Determine status for each proposal
         let proposalStatus = "";
         if (
+          statusProposal?.isActive &&
+          !statusProposal?.isExecuted &&
+          !statusProposal?.isApproved &&
+          statusProposal?.timeLeft > 0
+        ) {
+          proposalStatus = "Voting";
+        } else if (
+          !statusProposal?.isActive &&
           statusProposal?.isExecuted &&
           statusProposal?.isApproved &&
+          statusProposal?.timeLeft > 0 &&
           proposal.yesVotes > proposal.noVotes
         ) {
           proposalStatus = "Fundraising";
         } else if (
-          !statusProposal?.isExecuted &&
-          !statusProposal?.isApproved &&
-          proposal.yesVotes <= proposal.noVotes
+          statusProposal?.timeLeft !== undefined &&
+          statusProposal.timeLeft <= 0 &&
+          proposal.yesVotes > proposal.noVotes
         ) {
-          proposalStatus = "Voting";
+          proposalStatus = "Approved";
         } else if (
           statusProposal?.timeLeft !== undefined &&
           statusProposal.timeLeft <= 0 &&
@@ -73,10 +82,13 @@ export default function ProposalCard() {
         ) {
           proposalStatus = "Rejected";
         }
+
         if (filter === "all") return true;
-        if (filter === "elections" && proposalStatus === "Voting") return true;
+        if (filter === "voting" && proposalStatus === "Voting") return true;
         if (filter === "fundraising" && proposalStatus === "Fundraising")
           return true;
+        if (filter === "approved" && proposalStatus === "Approved") return true;
+        if (filter === "rejected" && proposalStatus === "Rejected") return true;
         return false;
       });
   }, [proposals, filter, statusProposal]);
@@ -98,8 +110,10 @@ export default function ProposalCard() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Proposals</SelectItem>
-            <SelectItem value="elections">Voting</SelectItem>
+            <SelectItem value="voting">Voting</SelectItem>
             <SelectItem value="fundraising">Fundraising</SelectItem>
+            <SelectItem value="approved">Approved</SelectItem>
+            <SelectItem value="rejected">Rejected</SelectItem>
           </SelectContent>
         </Select>
       </div>

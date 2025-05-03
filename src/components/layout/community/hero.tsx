@@ -4,12 +4,12 @@ export default function Hero() {
   return (
     <section>
       <h1 className="text-5xl font-bold">
-        Dari Komunitas, <br />
-        Untuk Komunitas
+        From Community, <br />
+        For Community
       </h1>
       <p className="text-muted-foreground w-1/2 mt-2">
-        Bergabunglah bersama kami. Jadilah bagian dari gerakan yang mengutamakan
-        transparansi, kolaborasi, dan kedaulatan komunitas.
+        Join us. Be part of the movement that prioritizes transparency,
+        collaboration, and community autonomy.
       </p>
     </section>
   );

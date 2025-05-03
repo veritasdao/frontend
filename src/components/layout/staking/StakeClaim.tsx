@@ -86,8 +86,8 @@ export default function StakeClaim() {
     },
     validationSchema: Yup.object({
       amount: Yup.number()
-        .required("Mohon mengisikan jumlah tabungan yang ingin diambil")
-        .min(10000, "Jumlah minimal 10.000 IDRX"),
+        .required("Please enter the amount to claim")
+        .min(10000, "Minimum claim amount is 10.000 IDRX"),
       // duration: Yup.number().required("Mohon mengisikan durasi tabungan"),
     }),
     onSubmit: confirmClaim,
@@ -116,7 +116,7 @@ export default function StakeClaim() {
         <CardContent className="space-y-5">
           <section className="space-y-2">
             <div className="flex justify-between font-medium text-sm">
-              <p>Jumlah Tabungan</p>
+              <p>Amount</p>
               <div className="flex items-center gap-2">
                 {locked ? (
                   <p>
@@ -192,7 +192,7 @@ export default function StakeClaim() {
 
           <section className="text-sm text-muted-foreground space-y-2">
             <div className="flex items-center justify-between">
-              <h1>IDRX yang tersisa</h1>
+              <h1>Remaining IDRX</h1>
               <p>{afterLocked.toLocaleString()} IDRX</p>
             </div>
             {/* <div className="flex items-center justify-between">
@@ -200,7 +200,7 @@ export default function StakeClaim() {
               <p>{formattedDuration}</p>
             </div> */}
             <div className="flex items-center justify-between">
-              <h1>Kekuatan/Hak suara yang tersisa</h1>
+              <h1>Remaining Voting Power</h1>
               <div className="flex items-center gap-1">
                 <p>{afterVotingPower.toLocaleString()}</p>
                 <Zap size={15} />
@@ -228,17 +228,17 @@ export default function StakeClaim() {
             >
               {isPending ? (
                 <p className="flex gap-1">
-                  Mengkonfirmasi <LoaderCircle className="animate-spin" />
+                  Confirming <LoaderCircle className="animate-spin" />
                 </p>
               ) : Number(formik.values.amount) >
                 Number(
                   balanceIDRX ? formatUnits(balanceIDRX as bigint, 2) : "0"
                 ) ? (
                 <p className="text-sm text-red-500">
-                  Jumlah tabungan melebihi saldo IDRX Anda
+                  Amount exceeds your IDRX balance
                 </p>
               ) : (
-                "Konfirmasi Ambil Tabungan"
+                "Confirm Claim"
               )}
             </Button>
           ) : (
@@ -250,12 +250,12 @@ export default function StakeClaim() {
               onClick={() => connect({ connector: injected() })}
             >
               <Wallet className="w-10 h-10" />
-              Hubungkan akun terlebih dahulu
+              Connect Wallet
             </Button>
           )}
         </CardFooter>
         <div className="max-w-5xl mx-auto text-center">
-          {confirmed && <p>Transaksi disetujui!</p>}
+          {confirmed && <p>Transaction approved!</p>}
           {isError && (
             <p className="max-w-xl">Error: {failureReason?.toString()}</p>
           )}
@@ -264,7 +264,7 @@ export default function StakeClaim() {
               Error: {receiptFailureReason?.toString()}
             </p>
           )}
-          {isSuccess && confirmed && <p>Transaksi telah dikonfimasi!</p>}
+          {isSuccess && confirmed && <p>Transaction approved!</p>}
           {isSuccess && !confirming && (
             <div>
               <Link
@@ -272,7 +272,7 @@ export default function StakeClaim() {
                 target="_blank"
               >
                 <Button type="button" variant={"outline"}>
-                  Lihat Detail Transaksi
+                  View Transaction Detail
                 </Button>
               </Link>
             </div>

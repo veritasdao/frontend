@@ -9,7 +9,7 @@ type ProposalDetailType = {
   image: string;
   github: string;
   whitepaper: string;
-  ownerlink: string;
+  ownerLink: string;
   description: string;
   motivasi: string;
   rincian: string;

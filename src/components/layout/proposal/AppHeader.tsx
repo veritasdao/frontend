@@ -40,7 +40,7 @@ export default function AppHeader() {
             pathname === "/proposal" ? "text-primary" : ""
           }`}
         >
-          Jelajahi Proposal
+          Explore Proposals
         </Link>
         <Link
           href={"/community"}
@@ -48,7 +48,7 @@ export default function AppHeader() {
             pathname === "/community" ? "text-primary" : ""
           }`}
         >
-          Jelajahi Komunitas
+          Explore Community
         </Link>
         <Link
           href={"/proposal/staking"}
@@ -56,7 +56,7 @@ export default function AppHeader() {
             pathname === "/proposal/staking" ? "text-primary" : ""
           }`}
         >
-          Menabung Koin
+          Staking
         </Link>
         {address && (
           <Link
@@ -65,7 +65,7 @@ export default function AppHeader() {
               pathname === "/profile" ? "text-primary" : ""
             }`}
           >
-            Profil Saya
+            My Profile
           </Link>
         )}
       </section>

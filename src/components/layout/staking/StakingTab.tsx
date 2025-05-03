@@ -8,8 +8,8 @@ export function StakingTab() {
   return (
     <Tabs defaultValue="stake" className="mx-auto max-w-2xl">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="stake">Mulai Menabung</TabsTrigger>
-        <TabsTrigger value="unstake">Ambil Tabungan</TabsTrigger>
+        <TabsTrigger value="stake">Stake</TabsTrigger>
+        <TabsTrigger value="unstake">Unstake</TabsTrigger>
       </TabsList>
       <TabsContent value="stake">
         <StakeForm />

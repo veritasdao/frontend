@@ -45,7 +45,7 @@ export default function Information({ index }: { index: number }) {
         <div className="space-y-2">
           <h1 className="text-3xl font-bold">{proposal?.title}</h1>
           <div className="">
-            <p className="text-sm text-muted-foreground">Pembuat Proposal</p>
+            <p className="text-sm text-muted-foreground">Creator/Builder</p>
             <div className="flex items-center gap-2">
               <Avatar>
                 <AvatarImage src="https://github.com/shadcn.png" />

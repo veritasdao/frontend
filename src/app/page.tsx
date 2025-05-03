@@ -1,4 +1,5 @@
 import { IntroduceVideo } from "@/components/IntroduceVideo";
+import Featured from "@/components/layout/community/featured";
 import Flow from "@/components/layout/home/flow";
 import HomeHeader from "@/components/layout/home/HomeHeader";
 import Intro from "@/components/layout/home/intro";
@@ -14,6 +15,7 @@ export default function Home() {
       <Velocity />
       <Intro />
       <Flow />
+      <Featured />
       <Quotes />
       <Testimonials />
     </main>

@@ -12,7 +12,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "Veritas DAO",
   description:
-    "Veritas adalah platform web3 DAO crowdfunding dan pendanaan publik berbasis donasi yang dibangun di atas jaringan LISK dengan token IDRX.",
+    "Veritas is a web3 DAO crowdfunding and public funding platform based on donations built on the LISK network with IDRX token.",
 };
 
 export default function RootLayout({

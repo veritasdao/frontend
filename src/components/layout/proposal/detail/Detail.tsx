@@ -36,48 +36,48 @@ export default function Detail({ index }: { index: number }) {
       {isLoading && <p>Loading...</p>}
       <div className="space-y-5" key={index}>
         <div>
-          <h2 className="text-2xl font-bold text-[#3b82f6]">Abstrak</h2>
+          <h2 className="text-2xl font-bold text-[#3b82f6]">Abstract</h2>
           <p>{proposal?.description}</p>
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold text-[#3b82f6]">Motivasi</h2>
+          <h2 className="text-2xl font-bold text-[#3b82f6]">Motivation</h2>
           <p>{proposal?.motivasi}</p>
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold text-[#3b82f6]">Rincian</h2>
+          <h2 className="text-2xl font-bold text-[#3b82f6]">Details</h2>
           <p className="whitespace-pre-line">{proposal?.rincian}</p>
         </div>
 
         <div>
           <h2 className="text-2xl font-bold text-[#3b82f6]">
-            Manfaat/Keuntungan
+            Benefits/Advantages
           </h2>
           <p>{proposal?.keuntungan}</p>
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold text-[#3b82f6]">Tantangan</h2>
+          <h2 className="text-2xl font-bold text-[#3b82f6]">Challenges</h2>
           <p>{proposal?.tantangan}</p>
         </div>
 
         <div>
           <h2 className="text-2xl font-bold text-[#3b82f6]">
-            Dampak dan Hasil
+            Impact and Results
           </h2>
           <p>{proposal?.dampakdanhasil}</p>
         </div>
 
         <div>
           <h2 className="text-2xl font-bold text-[#3b82f6] mb-1">
-            Dokumen Pendukung
+            Supporting Documents
           </h2>
 
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <BookUser />
-              <p>Pemilik proposal:</p>
+              <p>Proposal owner:</p>
               <LinkPreview url={`${proposal?.ownerLink}`}>
                 <span className="text-[#3b82f6]">{proposal?.ownerLink}</span>
               </LinkPreview>

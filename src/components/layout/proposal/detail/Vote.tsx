@@ -89,7 +89,7 @@ export default function Vote({ index }: { index: number }) {
         </Button>
       </div>
       <div className="flex justify-between">
-        <p>Jumlah (Hak Suara)</p>
+        <p className="text-sm">Jumlah (Hak Suara)</p>
         {balanceVotingPower ? (
           <p className="text-muted-foreground flex gap-1">
             <span className="font-bold">

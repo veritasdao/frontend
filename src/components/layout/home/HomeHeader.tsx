@@ -1,4 +1,4 @@
-import { BookOpenText, Layers, Users } from "lucide-react";
+import { BookOpenText, Earth, Layers } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -16,7 +16,7 @@ export default function HomeHeader() {
             target="_blank"
           >
             <Layers />
-            Proposal
+            Proposals
           </Link>
         </li>
         <li>
@@ -25,8 +25,8 @@ export default function HomeHeader() {
             target="_blank"
             className="text-sm flex gap-2 items-center text-muted-foreground hover:text-primary duration-300"
           >
-            <Users />
-            Komunitas
+            <Earth />
+            Ecosystem
           </Link>
         </li>
         <li>
@@ -36,7 +36,7 @@ export default function HomeHeader() {
             target="_blank"
           >
             <BookOpenText />
-            Dokumentasi
+            Documentation
           </Link>
         </li>
       </ul>

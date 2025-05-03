@@ -81,8 +81,8 @@ export default function StakeForm() {
     },
     validationSchema: Yup.object({
       amount: Yup.number()
-        .required("Mohon mengisikan jumlah tabungan")
-        .min(10000, "Jumlah tabungan minimal 10.000 IDRX"),
+        .required("Please enter the amount to stake")
+        .min(10000, "Minimum stake amount is 10.000 IDRX"),
       // duration: Yup.number().required("Mohon mengisikan durasi tabungan"),
     }),
     onSubmit: confirmStake,
@@ -103,7 +103,7 @@ export default function StakeForm() {
         <CardContent className="space-y-5">
           <section className="space-y-2">
             <div className="flex justify-between font-medium text-sm">
-              <p>Jumlah</p>
+              <p>Amount</p>
               <div className="flex items-center gap-2">
                 <Wallet size={20} />
                 {balanceIDRX ? (
@@ -180,7 +180,7 @@ export default function StakeForm() {
 
           <section className="text-sm text-muted-foreground space-y-2">
             <div className="flex items-center justify-between">
-              <h1>IDRX untuk ditabung</h1>
+              <h1>IDRX to stake</h1>
               <p>{parseFloat(formik.values.amount).toLocaleString()} IDRX</p>
             </div>
             {/* <div className="flex items-center justify-between">
@@ -188,7 +188,7 @@ export default function StakeForm() {
               <p>{formattedDuration}</p>
             </div> */}
             <div className="flex items-center justify-between">
-              <h1>Kekuatan/Hak suara</h1>
+              <h1>Voting Power</h1>
               <div className="flex items-center gap-1">
                 <p>{parseFloat(formik.values.amount).toLocaleString()}</p>
                 <Zap size={15} />
@@ -216,17 +216,17 @@ export default function StakeForm() {
             >
               {isPending ? (
                 <p className="flex gap-1">
-                  Mengkonfirmasi <LoaderCircle className="animate-spin" />
+                  Confirming <LoaderCircle className="animate-spin" />
                 </p>
               ) : Number(formik.values.amount) >
                 Number(
                   balanceIDRX ? formatUnits(balanceIDRX as bigint, 2) : "0"
                 ) ? (
                 <p className="text-sm text-red-500">
-                  Jumlah tabungan melebihi saldo IDRX Anda
+                  Amount exceeds your IDRX balance
                 </p>
               ) : (
-                "Konfirmasi Menabung"
+                "Confirm Stake"
               )}
             </Button>
           ) : (
@@ -238,12 +238,12 @@ export default function StakeForm() {
               onClick={() => connect({ connector: injected() })}
             >
               <Wallet className="w-10 h-10" />
-              Hubungkan akun terlebih dahulu
+              Connect Wallet
             </Button>
           )}
         </CardFooter>
         <div className="max-w-5xl mx-auto text-center">
-          {confirmed && <p>Transaksi disetujui!</p>}
+          {confirmed && <p>Transaction approved!</p>}
           {failureReason && (
             <p className="max-w-xl">Error: {failureReason?.toString()}</p>
           )}
@@ -252,7 +252,7 @@ export default function StakeForm() {
               Error: {receiptFailureReason?.toString()}
             </p>
           )}
-          {isSuccess && confirmed && <p>Transaksi telah dikonfimasi!</p>}
+          {isSuccess && confirmed && <p>Transaction approved!</p>}
           {isSuccess && !confirming && (
             <div>
               <Link
@@ -260,7 +260,7 @@ export default function StakeForm() {
                 target="_blank"
               >
                 <Button type="button" variant={"outline"}>
-                  Lihat Detail Transaksi
+                  View Transaction Detail
                 </Button>
               </Link>
             </div>

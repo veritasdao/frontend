@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import React from "react";
 
 export default function Hero() {
@@ -9,13 +10,15 @@ export default function Hero() {
         Real-world Impact
       </h1>
       <p className="text-muted-foreground w-1/2 mt-2">
-        Temukan proposal yang layak didukung. Voting, danai, dan bantu projek
-        mereka. Semua proposal di sini tervalidasi di blockchain LISK. Voting
-        menggunakan IDRX untuk mendukung ide yang kamu yakini.
+        Find proposals that are worth supporting. Vote, fund, and help projects.
+        All proposals here are validated on the LISK blockchain. Voting uses
+        IDRX to support ideas you believe in.
       </p>
-      <Button className="mt-4" size="lg">
-        Buat Proposal
-      </Button>
+      <Link href={"/proposal/create"}>
+        <Button className="mt-4" size="lg">
+          Create Proposal
+        </Button>
+      </Link>
     </section>
   );
 }

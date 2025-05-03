@@ -74,6 +74,7 @@ export default function TabAction({ index }: { index: number }) {
                     You have already voted on this proposal. Thank you for your
                     participation in the proposal voting.
                   </p>
+                  <Button disabled={!proposal?.executed}>Claim Reward</Button>
                   <p className="text-muted-foreground text-sm">
                     Note: If the proposal is approved, you will receive a reward
                     in the form of tokens from this community. This token can be

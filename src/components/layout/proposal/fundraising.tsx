@@ -62,7 +62,7 @@ export default function Fundraising({ index }: { index: number }) {
   return (
     <div className="border p-5 rounded-md space-y-3">
       <div className="flex justify-between">
-        <p>Jumlah (IDRX)</p>
+        <p className="text-sm">Jumlah (IDRX)</p>
         {balanceIDRX ? (
           <p className="text-muted-foreground flex gap-1">
             <Wallet strokeWidth={1} />

@@ -8,7 +8,7 @@ import Chat from "./layout/proposal/detail/Chat";
 export default function ProposalTab({ index }: { index: number }) {
   return (
     <Tabs defaultValue="detail" className="">
-      <TabsList className="w-1/2">
+      <TabsList>
         <TabsTrigger value="detail">Detail</TabsTrigger>
         <TabsTrigger value="discussion">Discussion</TabsTrigger>
         <TabsTrigger value="fundraising">Fundraising</TabsTrigger>

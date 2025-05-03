@@ -6,11 +6,11 @@ export default function page() {
     <main>
       <section className="text-center py-10">
         <h1 className="text-5xl font-bold mb-2">
-          Menabung Koin, Raih Imbalan Menarik!
+          Staking IDRX, Get Attractive Rewards!
         </h1>
         <h2 className="text-muted-foreground max-w-2xl mx-auto">
-          Simpan aset kriptomu dengan IDRX dan dapatkan keuntungan otomatis
-          setiap hari. Mulai menabung sekarang, biarkan koinmu bekerja untukmu!
+          Stake your IDRX assets and earn automatic rewards every day. Start
+          staking now, let your coins work for you!
         </h2>
       </section>
       <StakingTab />
