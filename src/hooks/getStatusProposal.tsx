@@ -8,7 +8,6 @@ type statusProposalType = {
   isActive: boolean;
   isExecuted: boolean;
   isApproved: boolean;
-  hasMetQuorum: boolean;
   timeLeft: number;
 };
 
@@ -16,7 +15,6 @@ type statusProposalRawData = [
   boolean, // isActive
   boolean, // isExecuted
   boolean, // isApproved
-  boolean, // hasMetQuorum
   number // timeLeft
 ];
 export default function useGetStatusProposal(index: number | null) {
@@ -33,8 +31,7 @@ export default function useGetStatusProposal(index: number | null) {
         isActive: (data as unknown as statusProposalRawData)[0],
         isExecuted: (data as unknown as statusProposalRawData)[1],
         isApproved: (data as unknown as statusProposalRawData)[2],
-        hasMetQuorum: (data as unknown as statusProposalRawData)[3],
-        timeLeft: (data as unknown as statusProposalRawData)[4],
+        timeLeft: (data as unknown as statusProposalRawData)[3],
       }
     : null;
   //   const statusProposal = data as statusProposalType[]; // ✅ cast ke tipe yang tepa

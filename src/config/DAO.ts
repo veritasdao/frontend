@@ -1,12 +1,9 @@
-export const DAOToken = "0xbE51Eec7DEe4E3d8c3478ED5094dDCaA7CC6BEe6";
+export const DAOToken = "0x207c11674022A1e5A852BEF2CCA66ff84DA89070";
 export const IDRXToken = "0xD63029C1a3dA68b51c67c6D1DeC3DEe50D681661";
 
 export const DAOABI = [
   {
-    inputs: [
-      { internalType: "address", name: "_idrx", type: "address" },
-      { internalType: "address", name: "_simpleSwap", type: "address" },
-    ],
+    inputs: [{ internalType: "address", name: "_idrx", type: "address" }],
     stateMutability: "nonpayable",
     type: "constructor",
   },
@@ -235,21 +232,7 @@ export const DAOABI = [
   },
   {
     inputs: [],
-    name: "MAXIMUM_PROPOSAL_DURATION",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "MAXIMUM_VOTING_POWER",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "MINIMUM_PROPOSAL_DURATION",
+    name: "FUNDRAISING_DURATION",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
@@ -259,6 +242,20 @@ export const DAOABI = [
     name: "MINIMUM_VOTING_POWER",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "VOTING_DURATION",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "proposalId", type: "uint256" }],
+    name: "claimReward",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -276,12 +273,14 @@ export const DAOABI = [
       { internalType: "string", name: "keuntungan", type: "string" },
       { internalType: "string", name: "tantangan", type: "string" },
       { internalType: "string", name: "dampakdanhasil", type: "string" },
+      { internalType: "string", name: "name", type: "string" },
+      { internalType: "string", name: "symbol", type: "string" },
       { internalType: "address", name: "proposer", type: "address" },
       { internalType: "uint256", name: "requestedAmount", type: "uint256" },
-      { internalType: "uint256", name: "deadline", type: "uint256" },
+      { internalType: "uint256", name: "votingDeadline", type: "uint256" },
+      { internalType: "uint256", name: "fundraisingDeadline", type: "uint256" },
       { internalType: "uint256", name: "yesVotes", type: "uint256" },
       { internalType: "uint256", name: "noVotes", type: "uint256" },
-      { internalType: "uint256", name: "quorum", type: "uint256" },
       { internalType: "bool", name: "executed", type: "bool" },
       { internalType: "bool", name: "approved", type: "bool" },
       { internalType: "uint256", name: "totalYesPower", type: "uint256" },
@@ -307,8 +306,7 @@ export const DAOABI = [
       { internalType: "uint256", name: "totalNoPower", type: "uint256" },
       { internalType: "bool", name: "approved", type: "bool" },
       { internalType: "bool", name: "executed", type: "bool" },
-      { internalType: "uint256", name: "deadline", type: "uint256" },
-      { internalType: "uint256", name: "quorum", type: "uint256" },
+      { internalType: "uint256", name: "votingDeadline", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
@@ -328,6 +326,7 @@ export const DAOABI = [
       { internalType: "uint256", name: "communityAllocation", type: "uint256" },
       { internalType: "uint256", name: "publicAllocation", type: "uint256" },
       { internalType: "bool", name: "distributed", type: "bool" },
+      { internalType: "bool", name: "liquidityAdded", type: "bool" },
     ],
     stateMutability: "view",
     type: "function",
@@ -347,9 +346,15 @@ export const DAOABI = [
           { internalType: "string", name: "keuntungan", type: "string" },
           { internalType: "string", name: "tantangan", type: "string" },
           { internalType: "string", name: "dampakdanhasil", type: "string" },
+          { internalType: "string", name: "name", type: "string" },
+          { internalType: "string", name: "symbol", type: "string" },
           { internalType: "uint256", name: "requestedAmount", type: "uint256" },
-          { internalType: "uint256", name: "deadline", type: "uint256" },
-          { internalType: "uint256", name: "quorum", type: "uint256" },
+          { internalType: "uint256", name: "votingDeadline", type: "uint256" },
+          {
+            internalType: "uint256",
+            name: "fundraisingDeadline",
+            type: "uint256",
+          },
         ],
         internalType: "struct DAOLaunchpad.ProposalParams",
         name: "params",
@@ -367,8 +372,6 @@ export const DAOABI = [
       { internalType: "string", name: "title", type: "string" },
       { internalType: "string", name: "description", type: "string" },
       { internalType: "uint256", name: "requestedAmount", type: "uint256" },
-      { internalType: "uint256", name: "deadline", type: "uint256" },
-      { internalType: "uint256", name: "quorum", type: "uint256" },
     ],
     name: "createSubProposal",
     outputs: [],
@@ -386,11 +389,7 @@ export const DAOABI = [
     type: "function",
   },
   {
-    inputs: [
-      { internalType: "uint256", name: "proposalId", type: "uint256" },
-      { internalType: "string", name: "name", type: "string" },
-      { internalType: "string", name: "symbol", type: "string" },
-    ],
+    inputs: [{ internalType: "uint256", name: "proposalId", type: "uint256" }],
     name: "executeProposal",
     outputs: [],
     stateMutability: "nonpayable",
@@ -407,6 +406,22 @@ export const DAOABI = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "factoryTokenDAO",
+    outputs: [
+      { internalType: "contract IFactoryTokenDAO", name: "", type: "address" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "proposalId", type: "uint256" }],
+    name: "finalizeProposal",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       { internalType: "uint256", name: "proposalId", type: "uint256" },
       { internalType: "uint256", name: "idrxAmount", type: "uint256" },
@@ -414,6 +429,27 @@ export const DAOABI = [
     name: "fundraising",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "address", name: "", type: "address" },
+    ],
+    name: "fundraisingContributions",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "proposalId", type: "uint256" }],
+    name: "getFundraising",
+    outputs: [
+      { internalType: "uint256", name: "totalRaised", type: "uint256" },
+      { internalType: "address[]", name: "contributors", type: "address[]" },
+      { internalType: "uint256[]", name: "amounts", type: "uint256[]" },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -440,12 +476,18 @@ export const DAOABI = [
           { internalType: "string", name: "keuntungan", type: "string" },
           { internalType: "string", name: "tantangan", type: "string" },
           { internalType: "string", name: "dampakdanhasil", type: "string" },
+          { internalType: "string", name: "name", type: "string" },
+          { internalType: "string", name: "symbol", type: "string" },
           { internalType: "address", name: "proposer", type: "address" },
           { internalType: "uint256", name: "requestedAmount", type: "uint256" },
-          { internalType: "uint256", name: "deadline", type: "uint256" },
+          { internalType: "uint256", name: "votingDeadline", type: "uint256" },
+          {
+            internalType: "uint256",
+            name: "fundraisingDeadline",
+            type: "uint256",
+          },
           { internalType: "uint256", name: "yesVotes", type: "uint256" },
           { internalType: "uint256", name: "noVotes", type: "uint256" },
-          { internalType: "uint256", name: "quorum", type: "uint256" },
           { internalType: "bool", name: "executed", type: "bool" },
           { internalType: "bool", name: "approved", type: "bool" },
           { internalType: "uint256", name: "totalYesPower", type: "uint256" },
@@ -466,7 +508,6 @@ export const DAOABI = [
       { internalType: "bool", name: "isActive", type: "bool" },
       { internalType: "bool", name: "isExecuted", type: "bool" },
       { internalType: "bool", name: "isApproved", type: "bool" },
-      { internalType: "bool", name: "hasMetQuorum", type: "bool" },
       { internalType: "uint256", name: "timeLeft", type: "uint256" },
     ],
     stateMutability: "view",
@@ -491,10 +532,14 @@ export const DAOABI = [
           { internalType: "string", name: "dampakdanhasil", type: "string" },
           { internalType: "address", name: "proposer", type: "address" },
           { internalType: "uint256", name: "requestedAmount", type: "uint256" },
-          { internalType: "uint256", name: "deadline", type: "uint256" },
+          { internalType: "uint256", name: "votingDeadline", type: "uint256" },
+          {
+            internalType: "uint256",
+            name: "fundraisingDeadline",
+            type: "uint256",
+          },
           { internalType: "uint256", name: "yesVotes", type: "uint256" },
           { internalType: "uint256", name: "noVotes", type: "uint256" },
-          { internalType: "uint256", name: "quorum", type: "uint256" },
           { internalType: "bool", name: "executed", type: "bool" },
           { internalType: "bool", name: "approved", type: "bool" },
           { internalType: "uint256", name: "totalYesPower", type: "uint256" },
@@ -548,7 +593,6 @@ export const DAOABI = [
       { internalType: "bool", name: "isActive", type: "bool" },
       { internalType: "bool", name: "isExecuted", type: "bool" },
       { internalType: "bool", name: "isApproved", type: "bool" },
-      { internalType: "bool", name: "hasMetQuorum", type: "bool" },
       { internalType: "uint256", name: "totalVotes", type: "uint256" },
     ],
     stateMutability: "view",
@@ -680,6 +724,16 @@ export const DAOABI = [
   },
   {
     inputs: [
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "address", name: "", type: "address" },
+    ],
+    name: "hasClaimedReward",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
       { internalType: "uint256", name: "proposalId", type: "uint256" },
       { internalType: "address", name: "user", type: "address" },
     ],
@@ -712,6 +766,15 @@ export const DAOABI = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "multiPairSwap",
+    outputs: [
+      { internalType: "contract IMultiPairSwap", name: "", type: "address" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       { internalType: "uint256", name: "", type: "uint256" },
       { internalType: "uint256", name: "", type: "uint256" },
@@ -736,12 +799,17 @@ export const DAOABI = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "simpleSwap",
-    outputs: [
-      { internalType: "contract SimpleSwap", name: "", type: "address" },
-    ],
-    stateMutability: "view",
+    inputs: [{ internalType: "address", name: "_factory", type: "address" }],
+    name: "setFactoryTokenDAO",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "_swap", type: "address" }],
+    name: "setMultiPairSwap",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -809,7 +877,6 @@ export const DAOABI = [
     type: "function",
   },
 ];
-
 export const IDRXABI = [
   {
     inputs: [

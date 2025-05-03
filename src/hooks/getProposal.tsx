@@ -15,13 +15,13 @@ type ProposalCardType = {
   rincian: string;
   keuntungan: string;
   tantangan: string;
-  dampak_dan_hasil: string;
+  dampakdanhasil: string;
   proposer: string;
   requestedAmount: number;
-  deadline: number;
+  votingDeadline: number;
+  fundraisingDeadline: number;
   yesVotes: number;
   noVotes: number;
-  quorum: number;
   executed: boolean;
   approved: boolean;
   totalYesPower: number;

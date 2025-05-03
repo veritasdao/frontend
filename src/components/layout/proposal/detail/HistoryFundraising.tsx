@@ -32,12 +32,12 @@ export default function HistoryFundraising({ index }: { index: number }) {
     return (
       <Card className="bg-transparent border-[#1d4ed8]">
         <CardHeader>
-          <CardTitle>Donation History</CardTitle>
-          <CardDescription>Recent donation activities</CardDescription>
+          <CardTitle>Fundraising History</CardTitle>
+          <CardDescription>Recent fundraising activities</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-center text-muted-foreground">
-            No donation history yet
+            No fundraising history yet
           </p>
         </CardContent>
       </Card>
@@ -47,8 +47,8 @@ export default function HistoryFundraising({ index }: { index: number }) {
   return (
     <Card className="bg-transparent border-[#1d4ed8]">
       <CardHeader>
-        <CardTitle>Donation History</CardTitle>
-        <CardDescription>Recent donation activities</CardDescription>
+        <CardTitle>Fundraising History</CardTitle>
+        <CardDescription>Recent fundraising activities</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>

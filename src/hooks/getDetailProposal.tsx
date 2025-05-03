@@ -9,7 +9,7 @@ type ProposalDetailType = {
   image: string;
   github: string;
   whitepaper: string;
-  ownerLink: string;
+  ownerlink: string;
   description: string;
   motivasi: string;
   rincian: string;
@@ -17,17 +17,17 @@ type ProposalDetailType = {
   tantangan: string;
   dampakdanhasil: string;
   proposer: string;
-  requestedAmount: bigint;
-  deadline: bigint;
-  yesVotes: bigint;
-  noVotes: bigint;
-  quorum: boolean;
+  requestedAmount: number;
+  votingDeadline: number;
+  fundraisingDeadline: number;
+  yesVotes: number;
+  noVotes: number;
   executed: boolean;
   approved: boolean;
-  totalYesPower: bigint;
-  totalNoPower: bigint;
+  totalYesPower: number;
+  totalNoPower: number;
+  tokenAddress: string;
 };
-
 // Define the type for the raw data returned from the contract
 // type ProposalRawData = [
 //   string, // title

@@ -19,10 +19,10 @@ export default function TokenInfo({ index }: { index: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Informasi Token</CardTitle>
+        <CardTitle>Token Information</CardTitle>
         <CardDescription>
-          Token yang dihasilkan melalui proposal ini akan sepenuhnya dikelola
-          oleh komunitas.
+          Tokens generated through this proposal will be fully managed by the
+          community.
         </CardDescription>
       </CardHeader>
       {proposal?.approved ? (
@@ -36,16 +36,13 @@ export default function TokenInfo({ index }: { index: number }) {
                   {tokenInfo?.tokenAddress.slice(-4)}
                 </p>
               </div>
-              <Link
-                href={`/community/${tokenInfo?.tokenAddress}`}
-                target="_blank"
-              >
-                <Button variant="outline">Kunjungi Komunitas</Button>
+              <Link href={`/community/${index}`} target="_blank">
+                <Button variant="outline">Visit Community</Button>
               </Link>
             </section>
             <hr />
             <section className="space-y-2">
-              <h3 className="text-lg font-semibold">Alokasi Token</h3>
+              <h3 className="text-lg font-semibold">Token Allocation</h3>
               <div className="grid grid-cols-8 text-xs text-center ">
                 <div className="col-span-2 space-y-1">
                   <div className="bg-[#2563eb] rounded-l-md h-5" />
@@ -65,13 +62,13 @@ export default function TokenInfo({ index }: { index: number }) {
                 {parseFloat(
                   formatUnits(tokenInfo?.totalSupply as bigint, 2)
                 ).toLocaleString()}{" "}
-                Token Komunitas
+                Community Tokens
               </p>
             </section>
             <hr />
             <section className="grid grid-cols-2 gap-5">
               <div>
-                <h3 className="text-muted-foreground text-sm">Likuiditas</h3>
+                <h3 className="text-muted-foreground text-sm">Liquidity</h3>
                 <p className="text-xl font-semibold">1000.000 IDRX</p>
               </div>
               <div>
@@ -84,7 +81,7 @@ export default function TokenInfo({ index }: { index: number }) {
       ) : (
         <CardContent>
           <p className="text-muted-foreground text-sm italic">
-            Proposal komunitas belum disetujui
+            Community proposal has not been approved
           </p>
         </CardContent>
       )}

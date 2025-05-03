@@ -25,7 +25,13 @@ type valuesFormType = {
   tantangan: string;
   dampak_dan_hasil: string;
   amount: string;
+  nameToken: string;
+  symbolToken: string;
 };
+
+const VOTING_DURATION = 3 * 24 * 60 * 60; // 3 days in seconds
+const FUNDRAISING_DURATION = 4 * 24 * 60 * 60; // 4 days in seconds
+const DEADLINE_BUFFER = 60; // 1 minute buffer
 
 export default function Form() {
   const [image, setImage] = React.useState<File | null>(null);
@@ -43,6 +49,11 @@ export default function Form() {
     }
   };
 
+  const handleRemoveImage = () => {
+    setImage(null);
+    setPreview(null);
+  };
+
   const {
     data: hash,
     writeContractAsync,
@@ -57,7 +68,7 @@ export default function Form() {
 
   async function createProposal(values: valuesFormType) {
     if (!image) {
-      toast("Tidak ada foto yang dipilih");
+      toast("No image selected");
       return;
     }
 
@@ -97,14 +108,20 @@ export default function Form() {
               keuntungan: values.keuntungan,
               tantangan: values.tantangan,
               dampakdanhasil: values.dampak_dan_hasil,
+              name: values.nameToken,
+              symbol: values.symbolToken,
               requestedAmount: parseUnits(values.amount.toString(), 2),
-              deadline: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
-              quorum: parseUnits("27500000", 2),
+              votingDeadline:
+                Math.floor(Date.now() / 1000) +
+                VOTING_DURATION +
+                DEADLINE_BUFFER,
+              fundraisingDeadline:
+                Math.floor(Date.now() / 1000) + FUNDRAISING_DURATION,
             },
           ],
         });
       } else {
-        toast("Foto belum tersimpan");
+        toast("Image not saved");
       }
     } catch (error) {
       toast(String(error));
@@ -113,9 +130,9 @@ export default function Form() {
 
   React.useEffect(() => {
     if (isSuccess && confirmed) {
-      toast("Proposal berhasil dibuat!", {
+      toast("Proposal created successfully!", {
         action: {
-          label: "Lihat Detail",
+          label: "View Details",
           onClick: () =>
             window.open(
               `https://sepolia-blockscout.lisk.com/tx/${hash}`,
@@ -138,202 +155,258 @@ export default function Form() {
       keuntungan: "",
       tantangan: "",
       dampak_dan_hasil: "",
+      nameToken: "",
+      symbolToken: "",
       amount: "",
     },
     validationSchema: Yup.object({
-      title: Yup.string().required("Mohon mengisikan Title"),
-      github: Yup.string().required("Mohon mengisikan github"),
-      whitepaper: Yup.string().required("Mohon mengisikan whitepaper"),
-      ownerLink: Yup.string().required("Mohon mengisikan ownerLink"),
-      description: Yup.string().required("Mohon mengisikan description"),
-      motivasi: Yup.string().required("Mohon mengisikan motivasi"),
-      rincian: Yup.string().required("Mohon mengisikan rincian"),
-      keuntungan: Yup.string().required("Mohon mengisikan keuntungan"),
-      tantangan: Yup.string().required("Mohon mengisikan tantangan"),
+      title: Yup.string().required("Please fill in the Title"),
+      github: Yup.string().required("Please fill in the Github"),
+      whitepaper: Yup.string().required("Please fill in the Whitepaper"),
+      ownerLink: Yup.string().required("Please fill in the Owner Link"),
+      description: Yup.string().required("Please fill in the Description"),
+      motivasi: Yup.string().required("Please fill in the Motivation"),
+      rincian: Yup.string().required("Please fill in the Project Details"),
+      keuntungan: Yup.string().required("Please fill in the Benefits"),
+      tantangan: Yup.string().required("Please fill in the Challenges"),
       dampak_dan_hasil: Yup.string().required(
-        "Mohon mengisikan dampak dan hasil"
+        "Please fill in the Expected Impact & Results"
       ),
-      amount: Yup.string().required(
-        "Mohon mengisikan jumlah dana yang di inginkan"
-      ),
+      nameToken: Yup.string().required("Please fill in the Token Name"),
+      symbolToken: Yup.string().required("Please fill in the Token Symbol"),
+      amount: Yup.string().required("Please fill in the Requested Funding"),
     }),
     onSubmit: createProposal,
   });
 
   return (
-    <form className="space-y-5" onSubmit={formik.handleSubmit}>
-      <div className="grid grid-cols-2 gap-10">
-        <section className="space-y-5">
+    <form className="space-y-8" onSubmit={formik.handleSubmit}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <section className="space-y-6">
           <div className="space-y-2">
-            <Label>Foto Proposal</Label>
-            <Input type="file" accept="image/*" onChange={handleImageChange} />
+            <Label>Proposal Image</Label>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              aria-label="Proposal Image"
+            />
             {preview && (
-              <div className="mt-2">
+              <div className="mt-2 relative w-fit">
                 <Image
                   src={preview}
-                  alt="Preview Proposal"
+                  alt="Proposal Preview"
                   width={500}
                   height={500}
-                  className="object-cover rounded-md border border-[#1d4ed8]"
+                  className="object-cover rounded-md border border-blue-700"
                 />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  className="absolute top-2 right-2"
+                  onClick={handleRemoveImage}
+                  aria-label="Remove Image"
+                >
+                  X
+                </Button>
               </div>
             )}
           </div>
           <div className="space-y-2">
-            <Label>Judul Proposal</Label>
+            <Label>Proposal Title</Label>
             <Input
               name="title"
               value={formik.values.title}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              placeholder="Contoh: Platform Edukasi Blockchain untuk Pemula"
+              placeholder="e.g. Blockchain Education Platform for Beginners"
+              aria-invalid={!!(formik.touched.title && formik.errors.title)}
+              aria-describedby="title-error"
             />
             {formik.touched.title && formik.errors.title && (
-              <div className="text-red-500 text-sm">{formik.errors.title}</div>
+              <div className="text-red-500 text-sm" id="title-error">
+                {formik.errors.title}
+              </div>
             )}
           </div>
           <div className="space-y-2">
-            <Label>Deskripsi Singkat</Label>
+            <Label>Short Description</Label>
             <Textarea
               name="description"
               value={formik.values.description}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              placeholder="Jelaskan secara ringkas tentang ide atau project yang diajukan"
+              placeholder="Briefly describe the idea or project being proposed"
+              aria-invalid={
+                !!(formik.touched.description && formik.errors.description)
+              }
+              aria-describedby="description-error"
             />
             {formik.touched.description && formik.errors.description && (
-              <div className="text-red-500 text-sm">
+              <div className="text-red-500 text-sm" id="description-error">
                 {formik.errors.description}
               </div>
             )}
           </div>
           <div className="space-y-2">
-            <Label>Rincian Project</Label>
+            <Label>Project Details</Label>
             <Textarea
               name="rincian"
               value={formik.values.rincian}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              placeholder="Rincian tahapan, fitur, atau langkah-langkah implementasi"
+              placeholder="Details of stages, features, or implementation steps"
+              aria-invalid={!!(formik.touched.rincian && formik.errors.rincian)}
+              aria-describedby="rincian-error"
             />
             {formik.touched.rincian && formik.errors.rincian && (
-              <div className="text-red-500 text-sm">
+              <div className="text-red-500 text-sm" id="rincian-error">
                 {formik.errors.rincian}
               </div>
             )}
           </div>
           <div className="space-y-2">
-            <Label>Motivasi</Label>
+            <Label>Motivation</Label>
             <Textarea
               name="motivasi"
               value={formik.values.motivasi}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              placeholder="Apa alasan utama kamu mengajukan proposal ini? Masalah apa yang ingin diselesaikan?"
+              placeholder="What is the main reason for submitting this proposal? What problem do you want to solve?"
+              aria-invalid={
+                !!(formik.touched.motivasi && formik.errors.motivasi)
+              }
+              aria-describedby="motivasi-error"
             />
             {formik.touched.motivasi && formik.errors.motivasi && (
-              <div className="text-red-500 text-sm">
+              <div className="text-red-500 text-sm" id="motivasi-error">
                 {formik.errors.motivasi}
               </div>
             )}
           </div>
         </section>
 
-        <section className="space-y-5">
+        <section className="space-y-6">
           <div className="space-y-2">
-            <Label>Keuntungan/Manfaat</Label>
+            <Label>Benefits</Label>
             <Textarea
               name="keuntungan"
               value={formik.values.keuntungan}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              placeholder="Apa manfaat atau nilai tambah project ini bagi komunitas/ekosistem?"
+              placeholder="What are the benefits or added value of this project for the community/ecosystem?"
+              aria-invalid={
+                !!(formik.touched.keuntungan && formik.errors.keuntungan)
+              }
+              aria-describedby="keuntungan-error"
             />
             {formik.touched.keuntungan && formik.errors.keuntungan && (
-              <div className="text-red-500 text-sm">
+              <div className="text-red-500 text-sm" id="keuntungan-error">
                 {formik.errors.keuntungan}
               </div>
             )}
           </div>
           <div className="space-y-2">
-            <Label>Tantangan</Label>
+            <Label>Challenges</Label>
             <Textarea
               name="tantangan"
               value={formik.values.tantangan}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              placeholder="Apa saja tantangan atau hambatan yang mungkin dihadapi?"
+              placeholder="What challenges or obstacles might be faced?"
+              aria-invalid={
+                !!(formik.touched.tantangan && formik.errors.tantangan)
+              }
+              aria-describedby="tantangan-error"
             />
             {formik.touched.tantangan && formik.errors.tantangan && (
-              <div className="text-red-500 text-sm">
+              <div className="text-red-500 text-sm" id="tantangan-error">
                 {formik.errors.tantangan}
               </div>
             )}
           </div>
           <div className="space-y-2">
-            <Label>Dampak & Hasil yang Diharapkan</Label>
+            <Label>Expected Impact & Results</Label>
             <Textarea
               name="dampak_dan_hasil"
               value={formik.values.dampak_dan_hasil}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              placeholder="Ceritakan dampak positif dan hasil konkret yang ingin dicapai"
+              placeholder="Describe the positive impact and concrete results you want to achieve"
+              aria-invalid={
+                !!(
+                  formik.touched.dampak_dan_hasil &&
+                  formik.errors.dampak_dan_hasil
+                )
+              }
+              aria-describedby="dampak-error"
             />
             {formik.touched.dampak_dan_hasil &&
               formik.errors.dampak_dan_hasil && (
-                <div className="text-red-500 text-sm">
+                <div className="text-red-500 text-sm" id="dampak-error">
                   {formik.errors.dampak_dan_hasil}
                 </div>
               )}
           </div>
           <section className="grid xl:grid-cols-2 gap-5">
             <div className="space-y-2">
-              <Label>Link Github</Label>
+              <Label>Github Link</Label>
               <Input
                 name="github"
                 value={formik.values.github}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                placeholder="https://github.com/namaproject"
+                placeholder="https://github.com/projectname"
+                aria-invalid={!!(formik.touched.github && formik.errors.github)}
+                aria-describedby="github-error"
               />
               {formik.touched.github && formik.errors.github && (
-                <div className="text-red-500 text-sm">
+                <div className="text-red-500 text-sm" id="github-error">
                   {formik.errors.github}
                 </div>
               )}
             </div>
             <div className="space-y-2">
-              <Label>Link Whitepaper/Dokumentasi</Label>
+              <Label>Whitepaper/Documentation Link</Label>
               <Input
                 name="whitepaper"
                 value={formik.values.whitepaper}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                placeholder="https://gitbook.com/ atau link docs"
+                placeholder="https://gitbook.com/ or docs link"
+                aria-invalid={
+                  !!(formik.touched.whitepaper && formik.errors.whitepaper)
+                }
+                aria-describedby="whitepaper-error"
               />
               {formik.touched.whitepaper && formik.errors.whitepaper && (
-                <div className="text-red-500 text-sm">
+                <div className="text-red-500 text-sm" id="whitepaper-error">
                   {formik.errors.whitepaper}
                 </div>
               )}
             </div>
             <div className="space-y-2">
-              <Label>Link Social Media/Personal</Label>
+              <Label>Social Media/Personal Link</Label>
               <Input
                 name="ownerLink"
                 value={formik.values.ownerLink}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                placeholder="https://twitter.com/username atau https://linkedin.com/in/username"
+                placeholder="https://twitter.com/username or https://linkedin.com/in/username"
+                aria-invalid={
+                  !!(formik.touched.ownerLink && formik.errors.ownerLink)
+                }
+                aria-describedby="ownerLink-error"
               />
               {formik.touched.ownerLink && formik.errors.ownerLink && (
-                <div className="text-red-500 text-sm">
+                <div className="text-red-500 text-sm" id="ownerLink-error">
                   {formik.errors.ownerLink}
                 </div>
               )}
             </div>
             <div className="space-y-2">
-              <Label>Jumlah Dana yang Diminta (IDRX)</Label>
+              <Label>Requested Funding (IDRX)</Label>
               <Input
                 name="amount"
                 type="number"
@@ -341,27 +414,88 @@ export default function Form() {
                 value={formik.values.amount}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                placeholder="Contoh: 2500"
+                placeholder="e.g. 2500"
+                aria-invalid={!!(formik.touched.amount && formik.errors.amount)}
+                aria-describedby="amount-error"
               />
               {formik.touched.amount && formik.errors.amount && (
-                <div className="text-red-500 text-sm">
+                <div className="text-red-500 text-sm" id="amount-error">
                   {formik.errors.amount}
                 </div>
               )}
             </div>
+            <hr className="col-span-2" />
+            <div className="space-y-5 col-span-2">
+              <p className="text-muted-foreground font-semibold">
+                Community Token (if approved)
+              </p>
+              <div className="grid grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <Label>Token Name</Label>
+                  <Input
+                    name="nameToken"
+                    value={formik.values.nameToken}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    placeholder="e.g. IDRX"
+                    aria-invalid={
+                      !!(formik.touched.nameToken && formik.errors.nameToken)
+                    }
+                    aria-describedby="nameToken-error"
+                  />
+                  {formik.touched.nameToken && formik.errors.nameToken && (
+                    <div className="text-red-500 text-sm" id="nameToken-error">
+                      {formik.errors.nameToken}
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label>Token Symbol</Label>
+                  <Input
+                    name="symbolToken"
+                    value={formik.values.symbolToken}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    placeholder="e.g. IDRX"
+                    aria-invalid={
+                      !!(
+                        formik.touched.symbolToken && formik.errors.symbolToken
+                      )
+                    }
+                    aria-describedby="symbolToken-error"
+                  />
+                  {formik.touched.symbolToken && formik.errors.symbolToken && (
+                    <div
+                      className="text-red-500 text-sm"
+                      id="symbolToken-error"
+                    >
+                      {formik.errors.symbolToken}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </section>
-          <div className="flex justify-end">
+          {isSuccess && confirmed && (
+            <div className="flex justify-end mt-6">
+              <p className="text-muted-foreground font-semibold">
+                Proposal created successfully!
+              </p>
+            </div>
+          )}
+          <div className="flex justify-end mt-6">
             <Button
               size={"lg"}
-              disabled={uploading || isPending || confirming}
+              disabled={uploading || isPending || confirming || isSuccess}
               type="submit"
+              aria-busy={uploading || isPending || confirming || isSuccess}
             >
               {uploading || isPending || confirming ? (
-                <div className="flex items-center gap-1">
-                  memvalidasi Proposal <LoaderCircle className="animate-spin" />
+                <div className="flex items-center gap-2">
+                  Validating Proposal <LoaderCircle className="animate-spin" />
                 </div>
               ) : (
-                "Simpan Proposal"
+                "Save Proposal"
               )}
             </Button>
           </div>

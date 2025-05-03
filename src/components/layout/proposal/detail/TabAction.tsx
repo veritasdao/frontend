@@ -21,7 +21,6 @@ export default function TabAction({ index }: { index: number }) {
     if (
       statusProposal.isActive &&
       !statusProposal.isApproved &&
-      !statusProposal.hasMetQuorum &&
       statusProposal.timeLeft > 0
     ) {
       return "vote";
@@ -32,22 +31,20 @@ export default function TabAction({ index }: { index: number }) {
       !statusProposal.isActive &&
       statusProposal.isExecuted &&
       statusProposal.isApproved &&
-      statusProposal.hasMetQuorum &&
       statusProposal.timeLeft > 0 &&
       proposal.yesVotes > proposal.noVotes
     ) {
       return "fundraising";
     }
 
-    // Case 3: Ditolak
+    // Case 3: Rejected
     if (
       !statusProposal.isActive &&
       !statusProposal.isExecuted &&
-      !statusProposal.hasMetQuorum &&
       statusProposal.timeLeft <= 0 &&
       proposal.noVotes > proposal.yesVotes
     ) {
-      return "ditolak";
+      return "rejected";
     }
 
     return "Loading...";
@@ -59,7 +56,7 @@ export default function TabAction({ index }: { index: number }) {
       <Tabs defaultValue={status === "fundraising" ? "fundraising" : "vote"}>
         <TabsList>
           <TabsTrigger value="fundraising" disabled={status !== "fundraising"}>
-            Pendanaan
+            Fundraising
           </TabsTrigger>
           <TabsTrigger value="vote" disabled={status !== "vote"}>
             Vote
@@ -74,14 +71,14 @@ export default function TabAction({ index }: { index: number }) {
               {hasVoted ? (
                 <div className="py-5 space-y-5">
                   <p className="">
-                    Anda sudah melakukan voting pada proposal ini. Terima kasih
-                    atas partisipasi Anda dalam pemilihan proposal.
+                    You have already voted on this proposal. Thank you for your
+                    participation in the proposal voting.
                   </p>
                   <p className="text-muted-foreground text-sm">
-                    Catatan: apabila proposal disetujui anda akan mendapatkan
-                    reward berupa token dari komunitas ini. token ini dapat
-                    digunakan untuk kontribusi dalam komunitas ini dan dapat di
-                    tukar dengan IDRX.
+                    Note: If the proposal is approved, you will receive a reward
+                    in the form of tokens from this community. This token can be
+                    used for contributions to this community and can be
+                    exchanged for IDRX.
                   </p>
                 </div>
               ) : (
@@ -98,7 +95,7 @@ export default function TabAction({ index }: { index: number }) {
             onClick={() => connect({ connector: injected() })}
           >
             <Wallet className="w-10 h-10" />
-            Hubungkan akun terlebih dahulu
+            Connect Account First
           </Button>
         )}
       </Tabs>

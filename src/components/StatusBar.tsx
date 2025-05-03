@@ -18,11 +18,11 @@ export default function StatusBar({ index }: StatusBarProps) {
     // Case 1: Pemilihan
     if (
       statusProposal.isActive &&
+      !statusProposal.isExecuted &&
       !statusProposal.isApproved &&
-      !statusProposal.hasMetQuorum &&
       statusProposal.timeLeft > 0
     ) {
-      return "Pemilihan";
+      return "Voting";
     }
 
     // Case 2: Fundraising
@@ -30,19 +30,15 @@ export default function StatusBar({ index }: StatusBarProps) {
       !statusProposal.isActive &&
       statusProposal.isExecuted &&
       statusProposal.isApproved &&
-      statusProposal.hasMetQuorum &&
       statusProposal.timeLeft > 0 &&
       proposal.yesVotes > proposal.noVotes
     ) {
       return "Fundraising";
     }
 
-    // Case 3: Ditolak
-    if (
-      (!statusProposal.isActive && !statusProposal.isApproved) ||
-      (statusProposal.timeLeft <= 0 && proposal.noVotes > proposal.yesVotes)
-    ) {
-      return "Ditolak";
+    // Case 3: Rejected
+    if (statusProposal.timeLeft <= 0 && proposal.noVotes > proposal.yesVotes) {
+      return "Rejected";
     }
 
     return "Loading...";
@@ -51,25 +47,25 @@ export default function StatusBar({ index }: StatusBarProps) {
   const status = getStatus();
 
   const stages = [
-    { id: "pemilihan", label: "Pemilihan" },
+    { id: "voting", label: "Voting" },
     {
       id: "final",
       label:
-        status === "Pemilihan"
+        status === "Voting"
           ? "Final"
           : status === "Fundraising"
           ? "Fundraising"
-          : "Ditolak",
+          : "Rejected",
     },
   ];
 
   const getStageStatus = (stageId: string) => {
     switch (status) {
-      case "Pemilihan":
-        return stageId === "pemilihan" ? "active" : "pending";
+      case "Voting":
+        return stageId === "voting" ? "active" : "pending";
       case "Fundraising":
         return stageId === "final" ? "approved" : "completed";
-      case "Ditolak":
+      case "Rejected":
         return stageId === "final" ? "rejected" : "inactive";
       default:
         return "inactive";
@@ -109,8 +105,8 @@ export default function StatusBar({ index }: StatusBarProps) {
         <div
           className={cn(
             "absolute top-0 left-0 h-1 transition-all duration-300",
-            status === "Pemilihan" && "w-1/2 bg-primary",
-            (status === "Fundraising" || status === "Ditolak") &&
+            status === "Voting" && "w-1/2 bg-primary",
+            (status === "Fundraising" || status === "Rejected") &&
               "w-full bg-primary"
           )}
         />

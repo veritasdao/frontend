@@ -54,9 +54,11 @@ export default function TokenCommunity({ index }: { index: number }) {
             </div>
             <p className="text-sm text-muted-foreground">
               Total Supply:{" "}
-              {parseFloat(
-                formatUnits(tokenInfo?.totalSupply as bigint, 2)
-              ).toLocaleString()}{" "}
+              {tokenInfo?.totalSupply
+                ? parseFloat(
+                    formatUnits(tokenInfo.totalSupply as bigint, 2)
+                  ).toLocaleString()
+                : "0"}{" "}
               <span className="text-xs text-muted-foreground">
                 {tokenInfo?.symbol}
               </span>

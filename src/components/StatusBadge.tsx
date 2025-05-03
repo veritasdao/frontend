@@ -18,11 +18,11 @@ export default function StatusBadge({ index }: StatusBadgeProps) {
     // Case 1: Pemilihan
     if (
       statusProposal.isActive &&
+      !statusProposal.isExecuted &&
       !statusProposal.isApproved &&
-      !statusProposal.hasMetQuorum &&
       statusProposal.timeLeft > 0
     ) {
-      return "Pemilihan";
+      return "Voting";
     }
 
     // Case 2: Fundraising
@@ -30,19 +30,15 @@ export default function StatusBadge({ index }: StatusBadgeProps) {
       !statusProposal.isActive &&
       statusProposal.isExecuted &&
       statusProposal.isApproved &&
-      statusProposal.hasMetQuorum &&
       statusProposal.timeLeft > 0 &&
       proposal.yesVotes > proposal.noVotes
     ) {
       return "Fundraising";
     }
 
-    // Case 3: Ditolak
-    if (
-      (!statusProposal.isActive && !statusProposal.isApproved) ||
-      (statusProposal.timeLeft <= 0 && proposal.noVotes > proposal.yesVotes)
-    ) {
-      return "Ditolak";
+    // Case 3: Rejected
+    if (statusProposal.timeLeft <= 0 && proposal.noVotes > proposal.yesVotes) {
+      return "Rejected";
     }
 
     return "Loading...";
@@ -52,13 +48,13 @@ export default function StatusBadge({ index }: StatusBadgeProps) {
 
   let color = "secondary"; // default gray
   switch (status) {
-    case "Pemilihan":
-      color = "default"; // yellow (custom)
+    case "Voting":
+      color = "outline"; // yellow (custom)
       break;
     case "Fundraising":
       color = "default"; // green (custom)
       break;
-    case "Ditolak":
+    case "Rejected":
       color = "destructive"; // red (default shadcn)
       break;
     default:

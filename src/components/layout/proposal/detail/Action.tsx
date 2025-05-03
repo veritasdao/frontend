@@ -26,8 +26,16 @@ export default function Action({ index }: { index: number }) {
           totalFundraising={totalFundraising ? Number(totalFundraising) : null}
           totalVoter={totalVoter ? Number(totalVoter) : 0}
           totalVoterPower={totalVoterPower ? Number(totalVoterPower) : 0}
-          totalQuorum={proposal?.quorum ? Number(proposal.quorum) : 0}
-          deadline={proposal?.deadline ? Number(proposal.deadline) : 0}
+          votingDeadline={
+            proposal?.votingDeadline ? Number(proposal.votingDeadline) : 0
+          }
+          fundraisingDeadline={
+            proposal?.fundraisingDeadline
+              ? Number(proposal.fundraisingDeadline)
+              : 0
+          }
+          yesVotes={proposal?.yesVotes ? Number(proposal.yesVotes) : 0}
+          noVotes={proposal?.noVotes ? Number(proposal.noVotes) : 0}
         />
         <hr />
         <TabAction index={index} />

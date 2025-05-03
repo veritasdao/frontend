@@ -2,7 +2,7 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Detail from "./layout/proposal/detail/Detail";
 import HistoryVote from "./layout/proposal/detail/HistoryVote";
-import HistoryDonate from "./layout/proposal/detail/HistoryFundraising";
+import HistoryFundraising from "./layout/proposal/detail/HistoryFundraising";
 import Chat from "./layout/proposal/detail/Chat";
 
 export default function ProposalTab({ index }: { index: number }) {
@@ -10,15 +10,15 @@ export default function ProposalTab({ index }: { index: number }) {
     <Tabs defaultValue="detail" className="">
       <TabsList className="w-1/2">
         <TabsTrigger value="detail">Detail</TabsTrigger>
-        <TabsTrigger value="discussion">Diskusi</TabsTrigger>
-        <TabsTrigger value="donasi">Pendanaan</TabsTrigger>
+        <TabsTrigger value="discussion">Discussion</TabsTrigger>
+        <TabsTrigger value="fundraising">Fundraising</TabsTrigger>
         <TabsTrigger value="vote">Vote</TabsTrigger>
       </TabsList>
       <TabsContent value="detail">
         <Detail index={index} />
       </TabsContent>
-      <TabsContent value="donasi">
-        <HistoryDonate index={index} />
+      <TabsContent value="fundraising">
+        <HistoryFundraising index={index} />
       </TabsContent>
       <TabsContent value="vote">
         <HistoryVote index={index} />

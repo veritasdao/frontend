@@ -16,7 +16,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import useGetStatusProposal from "@/hooks/getStatusProposal";
-import { getProposalStatus } from "@/hooks/getProposalStatus";
 import {
   Select,
   SelectContent,
@@ -37,7 +36,6 @@ export default function ProposalCard() {
   }, [proposals]);
 
   const { statusProposal } = useGetStatusProposal(index);
-
   const { data: totalFundraising, refetch } = useReadContract({
     abi: DAOABI,
     address: DAOToken,
@@ -51,18 +49,32 @@ export default function ProposalCard() {
 
   const filteredProposals = React.useMemo(() => {
     if (!proposals) return [];
-
     return proposals
-      .sort((a, b) => Number(b.deadline) - Number(a.deadline))
+      .sort((a, b) => Number(b.votingDeadline) - Number(a.votingDeadline))
       .filter((proposal) => {
-        const proposalStatus = getProposalStatus(statusProposal, {
-          yesVotes: proposal.yesVotes || 0,
-          noVotes: proposal.noVotes || 0,
-        });
-
+        // Determine status for each proposal
+        let proposalStatus = "";
+        if (
+          statusProposal?.isExecuted &&
+          statusProposal?.isApproved &&
+          proposal.yesVotes > proposal.noVotes
+        ) {
+          proposalStatus = "Fundraising";
+        } else if (
+          !statusProposal?.isExecuted &&
+          !statusProposal?.isApproved &&
+          proposal.yesVotes <= proposal.noVotes
+        ) {
+          proposalStatus = "Voting";
+        } else if (
+          statusProposal?.timeLeft !== undefined &&
+          statusProposal.timeLeft <= 0 &&
+          proposal.noVotes > proposal.yesVotes
+        ) {
+          proposalStatus = "Rejected";
+        }
         if (filter === "all") return true;
-        if (filter === "elections" && proposalStatus === "Pemilihan")
-          return true;
+        if (filter === "elections" && proposalStatus === "Voting") return true;
         if (filter === "fundraising" && proposalStatus === "Fundraising")
           return true;
         return false;
@@ -73,10 +85,10 @@ export default function ProposalCard() {
     <>
       <div className=" space-y-3">
         <h1 className="text-xl text-muted-foreground">
-          Menampilkan{" "}
+          Showing{" "}
           {filteredProposals && (
             <strong className="text-primary">
-              {filteredProposals.length} Proposal
+              {filteredProposals.length} Proposals
             </strong>
           )}
         </h1>
@@ -85,8 +97,8 @@ export default function ProposalCard() {
             <SelectValue placeholder="Filter Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Semua Proposal</SelectItem>
-            <SelectItem value="elections">Pemilihan</SelectItem>
+            <SelectItem value="all">All Proposals</SelectItem>
+            <SelectItem value="elections">Voting</SelectItem>
             <SelectItem value="fundraising">Fundraising</SelectItem>
           </SelectContent>
         </Select>
@@ -119,7 +131,7 @@ export default function ProposalCard() {
                   {proposal.approved ? (
                     <div className="mt-2">
                       <p className="text-xs text-muted-foreground">
-                        Jumlah Penggalangan Dana
+                        Total Fundraising Amount
                       </p>
                       <NumberTicker
                         className="font-bold text-3xl"
@@ -138,7 +150,7 @@ export default function ProposalCard() {
                     </div>
                   ) : (
                     <p className="text-sm text-[#3b82f6]">
-                      Pendanaan Belum Dimulai
+                      Funding Not Started Yet
                     </p>
                   )}
                 </CardContent>
