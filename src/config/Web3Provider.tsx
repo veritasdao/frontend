@@ -11,7 +11,7 @@ export const config = defaultConfig({
   walletConnectProjectId: "8f5138c3b3968106a28d4f9e26d30289",
 
   // Required for Xellar Passport
-  xellarAppId: "4f75544d-f4fe-4505-ad9f-f2f9bd649033",
+  xellarAppId: "31dad043-6324-4117-8b9c-0502f5d710c6",
   xellarEnv: "sandbox",
   chains: [liskSepolia],
   ssr: true, // Use this if you're using Next.js App Router
@@ -27,7 +27,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
           theme={darkTheme}
           showConfirmationModal={true}
           // Fill this if you want to use Google Auth
-          googleClientId="506201553534-0vsto0lt97ktib77q4efqhimm035hoic.apps.googleusercontent.com"
+          googleClientId="506201553534-oikabi8nf8ik6s21roj952r1j480n2bc.apps.googleusercontent.com"
           // Fill this if you want to use Telegram Auth
           telegramConfig={{
             botId: "7389829722:AAEBPnKUZTUEV3aNQVA4pseLFRTFlXszW-Y",

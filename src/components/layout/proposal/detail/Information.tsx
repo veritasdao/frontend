@@ -5,9 +5,12 @@ import React from "react";
 // import { useReadContract } from "wagmi";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useGetDetailProposals from "@/hooks/getDetailProposal";
-
+import useGetProfileUser from "@/hooks/getProfileUser";
 export default function Information({ index }: { index: number }) {
   const { proposal, isLoading } = useGetDetailProposals(index);
+  const { profile } = useGetProfileUser({
+    userAddress: proposal?.proposer,
+  });
   // const [index, setIndex] = React.useState<number | null>(null);
 
   // React.useEffect(() => {
@@ -48,11 +51,11 @@ export default function Information({ index }: { index: number }) {
             <p className="text-sm text-muted-foreground">Creator/Builder</p>
             <div className="flex items-center gap-2">
               <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage src={profile?.image_url} />
+                <AvatarFallback>{profile?.username.slice(0, 2)}</AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-sm font-medium">@KayzDev</p>
+                <p className="text-sm font-medium">@{profile?.username}</p>
                 <p className="text-xs">
                   {proposal?.proposer.slice(0, 5)}...
                   {proposal?.proposer.slice(-5)}

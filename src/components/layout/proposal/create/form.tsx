@@ -8,10 +8,18 @@ import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "sonner";
-import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import {
+  injected,
+  useAccount,
+  useConnect,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import { DAOABI, DAOToken, IDRXABI, IDRXToken } from "@/config/DAO";
 import { parseUnits } from "viem";
 import { LoaderCircle } from "lucide-react";
+import useGetProfile from "@/hooks/getProfile";
+import { useRouter } from "next/navigation";
 
 type valuesFormType = {
   title: string;
@@ -34,9 +42,14 @@ const FUNDRAISING_DURATION = 4 * 24 * 60 * 60; // 4 days in seconds
 const DEADLINE_BUFFER = 60; // 1 minute buffer
 
 export default function Form() {
+  const { isConnected } = useAccount();
+  const { connect } = useConnect();
+
+  const router = useRouter();
   const [image, setImage] = React.useState<File | null>(null);
   const [preview, setPreview] = React.useState<string | null>(null);
   const [uploading, setUploading] = React.useState<boolean>(false);
+  const { profile, loading } = useGetProfile();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -178,6 +191,50 @@ export default function Form() {
     }),
     onSubmit: createProposal,
   });
+
+  if (!isConnected) {
+    return (
+      <div>
+        <div className="flex flex-col items-center gap-2 text-center">
+          <div>
+            <h1 className="text-2xl font-bold">Connect Your Account</h1>
+            <p className="text-muted-foreground">
+              Please connect your account to continue
+            </p>
+          </div>
+          <Button onClick={() => connect({ connector: injected() })}>
+            Connect Account
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="border rounded-md p-4 w-fit mx-auto">
+        <div className="flex items-center gap-1">
+          <p className="text-muted-foreground">Loading</p>
+          <LoaderCircle className="animate-spin" />
+        </div>
+      </div>
+    );
+  }
+  if (!profile) {
+    return (
+      <div className="border rounded-md p-4 w-fit mx-auto">
+        <div className="flex flex-col items-center gap-2">
+          <h1 className="text-2xl font-bold">Profile Required</h1>
+          <p className="text-muted-foreground">
+            You need to create a profile before you can submit a proposal.
+          </p>
+          <Button onClick={() => router.push("/profile")}>
+            Create Profile
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form className="space-y-8" onSubmit={formik.handleSubmit}>

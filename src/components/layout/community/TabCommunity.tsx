@@ -16,7 +16,7 @@ export default function TabCommunity({ index }: { index: number }) {
         <ActivityCommunity />
       </TabsContent>
       <TabsContent value="discussion">
-        <Chat messages={messages} />
+        <Chat proposalId={index} />
       </TabsContent>
       <TabsContent value="detail">
         <Detail index={index} />

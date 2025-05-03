@@ -24,7 +24,7 @@ export default function ProposalTab({ index }: { index: number }) {
         <HistoryVote index={index} />
       </TabsContent>
       <TabsContent value="discussion">
-        <Chat messages={messages} />
+        <Chat proposalId={index} />
       </TabsContent>
     </Tabs>
   );
