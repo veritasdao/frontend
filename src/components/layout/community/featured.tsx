@@ -1,59 +1,20 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { Marquee } from "@/components/magicui/marquee";
 import Image from "next/image";
-
-const reviews = [
-  {
-    name: "Jack",
-    username: "@jack",
-    body: "I've never seen anything like this before. It's amazing. I love it.",
-    img: "https://avatar.vercel.sh/jack",
-  },
-  {
-    name: "Jill",
-    username: "@jill",
-    body: "I don't know what to say. I'm speechless. This is amazing.",
-    img: "https://avatar.vercel.sh/jill",
-  },
-  {
-    name: "John",
-    username: "@john",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/john",
-  },
-  {
-    name: "Jane",
-    username: "@jane",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/jane",
-  },
-  {
-    name: "Jenny",
-    username: "@jenny",
-    body: "I'm at a loss for words. This is amazing. I love it.ssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
-    img: "https://avatar.vercel.sh/jenny",
-  },
-  {
-    name: "James",
-    username: "@james",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/james",
-  },
-];
-
-// const firstRow = reviews.slice(0, reviews.length / 2);
-const secondRow = reviews.slice(reviews.length / 2);
+import useGetProposals from "@/hooks/getProposal";
+import React from "react";
 
 const ReviewCard = ({
   img,
   name,
-  username,
-  body,
+  description,
+  tokenAddress,
 }: {
   img: string;
   name: string;
-  username: string;
-  body: string;
+  description: string;
+  tokenAddress: string;
 }) => {
   return (
     <figure
@@ -70,7 +31,7 @@ const ReviewCard = ({
           className="rounded-full"
           width={32}
           height={32}
-          alt={username}
+          alt={name}
           src={img}
           priority={true}
         />
@@ -78,26 +39,62 @@ const ReviewCard = ({
           <figcaption className="text-sm font-medium dark:text-white">
             {name}
           </figcaption>
-          <p className="text-xs font-medium dark:text-white/40">{username}</p>
+          <p className="text-xs font-medium dark:text-white/40">
+            {tokenAddress.slice(0, 4)}...{tokenAddress.slice(-4)}
+          </p>
         </div>
       </div>
-      <blockquote className="mt-2 text-sm line-clamp-2">{body}</blockquote>
+      <blockquote className="mt-2 text-sm line-clamp-2">
+        {description}
+      </blockquote>
     </figure>
   );
 };
 
 export default function Featured() {
+  const { proposals, isLoading } = useGetProposals();
+
+  const filteredProposals = React.useMemo(() => {
+    if (!proposals) return [];
+    return (
+      proposals
+        // .filter(
+        //   (proposal) =>
+        //     proposal.tokenAddress !== "0x0000000000000000000000000000000000000000"
+        // )
+        .sort((a, b) => Number(b.votingDeadline) - Number(a.votingDeadline))
+    );
+  }, [proposals]);
+
+  if (isLoading) return null;
+
   return (
     <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
-      {/* <Marquee pauseOnHover className="[--duration:20s]">
-        {firstRow.map((review) => (
-          <ReviewCard key={review.username} {...review} />
-        ))}
+      {/* <Marquee pauseOnHover className="[--duration:10s]">
+        {filteredProposals
+          .slice(0, Math.ceil(filteredProposals.length / 2))
+          .map((proposal, index) => (
+            <ReviewCard
+              key={index}
+              img={proposal.image}
+              name="DAO Token"
+              description={proposal.description}
+              tokenAddress={proposal.tokenAddress}
+            />
+          ))}
       </Marquee> */}
-      <Marquee reverse pauseOnHover className="[--duration:20s]">
-        {secondRow.map((review) => (
-          <ReviewCard key={review.username} {...review} />
-        ))}
+      <Marquee reverse pauseOnHover className="[--duration:10s]">
+        {filteredProposals
+          .slice(Math.ceil(filteredProposals.length / 2))
+          .map((proposal, index) => (
+            <ReviewCard
+              key={index}
+              img={proposal.image}
+              name="DAO Token"
+              description={proposal.description}
+              tokenAddress={proposal.tokenAddress}
+            />
+          ))}
       </Marquee>
       <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
       <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>

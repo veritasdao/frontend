@@ -6,11 +6,11 @@ export default function page() {
     <main className="space-y-5">
       <div className="text-center py-10">
         <h1 className="text-5xl font-bold mb-2">
-          Jadikan Inovasi Kamu Menjadi Kenyataan. Mulai dari Sini!
+          Turn Your Innovation Into Reality. Start Here!
         </h1>
         <h2 className="text-muted-foreground  mx-auto">
-          Isi formulir berikut untuk mengajukan proposal project yang siap
-          didukung dan diwujudkan bersama Veritas DAO.
+          Fill out the following form to submit a project proposal that's ready
+          to be supported and realized together with Veritas DAO.
         </h2>
       </div>
       <Form />

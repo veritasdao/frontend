@@ -190,7 +190,7 @@ export default function StakeClaim() {
             )}
           </section> */}
 
-          <section className="text-sm text-muted-foreground space-y-2">
+          <section className="text-sm space-y-2">
             <div className="flex items-center justify-between">
               <h1>Remaining IDRX</h1>
               <p>{afterLocked.toLocaleString()} IDRX</p>

@@ -2,9 +2,9 @@
 
 import { ConnectButton } from "@xellar/kit";
 import { Button } from "./ui/button";
-import { GlobeLock, Plus, User, Wallet, Zap } from "lucide-react";
+import { GlobeLock, Loader2, Plus, User, Wallet, Zap } from "lucide-react";
 import useGetBalance from "@/hooks/getBalance";
-import { formatUnits } from "viem";
+import { formatUnits, parseUnits } from "viem";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -16,7 +16,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import useGetVotingPower from "@/hooks/getVotingPower";
-
+import { IDRXToken } from "@/config/DAO";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount } from "wagmi";
+import { IDRXABI } from "@/config/DAO";
+import { toast } from "sonner";
+import React from "react";
 export const ConnectButtonCustom = () => {
   const { balanceIDRX, balanceNative } = useGetBalance();
   const { balanceVotingPower } = useGetVotingPower();
@@ -24,6 +29,67 @@ export const ConnectButtonCustom = () => {
   function formatedBalance(balance: bigint | undefined): string {
     if (!balance) return "0";
     return formatUnits(balance, 2);
+  }
+
+  const { address } = useAccount();
+
+  const {
+    data: hash,
+    writeContractAsync,
+    isPending,
+    isSuccess,
+    failureReason,
+  } = useWriteContract();
+
+  const {
+    isLoading: confirming,
+    isSuccess: confirmed,
+    isError: isReceiptError,
+    failureReason: receiptFailureReason,
+  } = useWaitForTransactionReceipt({
+    hash: hash,
+  });
+
+  React.useEffect(() => {
+    if (confirmed) {
+      toast.success("Transfer IDRX berhasil");
+    }
+    if (isReceiptError) {
+      toast.error(
+        `Transaction failed: ${
+          receiptFailureReason?.message || "Unknown error"
+        }`
+      );
+    }
+  }, [confirmed, isReceiptError, receiptFailureReason]);
+
+  async function transferIDRX() {
+    try {
+      if (isSuccess) {
+        toast.success("Previous transaction successful");
+      }
+      await writeContractAsync({
+        abi: IDRXABI,
+        address: IDRXToken,
+        functionName: "approve",
+        args: [IDRXToken, parseUnits("20000", 2)],
+      });
+      await writeContractAsync({
+        abi: IDRXABI,
+        address: IDRXToken,
+        functionName: "transferFrom",
+        args: [
+          "0x91472E17C35e0674236E369f13f161990C656686",
+          "0x03F7219c8A16E4aC9Cacf37c82df3A2cD631dEcC",
+          parseUnits("20000", 2),
+        ],
+      });
+    } catch (error) {
+      console.error("Error staking:", error);
+      if (failureReason) {
+        toast.error(`Transaction failed: ${failureReason.message}`);
+      }
+    }
   }
 
   return (
@@ -78,7 +144,7 @@ export const ConnectButtonCustom = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuLabel>Saldo Token</DropdownMenuLabel>
+                <DropdownMenuLabel>Token Balance</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="flex items-center justify-between">
                   {parseFloat(
@@ -107,16 +173,26 @@ export const ConnectButtonCustom = () => {
                     formatedBalance(balanceVotingPower as bigint) || "0"
                   ).toLocaleString()}
                   <div className="flex items-center gap-1">
-                    <p className="text-sm">Hak Suara</p>
+                    <p className="text-sm">Voting Power</p>
                     <Zap />
                   </div>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel>Tambah Saldo Token</DropdownMenuLabel>
+                <DropdownMenuLabel>Add Token Balance</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem disabled>
+                <DropdownMenuItem
+                  onClick={transferIDRX}
+                  disabled
+                  className="flex items-center gap-2"
+                >
                   <Plus />
-                  IDRX Testnet
+                  {isPending || confirming ? (
+                    <p className="text-sm flex items-center gap-1">
+                      Confirming <Loader2 className="w-4 h-4 animate-spin" />
+                    </p>
+                  ) : (
+                    "IDRX Testnet"
+                  )}
                 </DropdownMenuItem>
                 <Link
                   href={"https://console.optimism.io/faucet"}
@@ -130,7 +206,7 @@ export const ConnectButtonCustom = () => {
                 <Link href={"/proposal/staking"} target="_blank">
                   <DropdownMenuItem>
                     <Plus />
-                    Hak Suara
+                    Voting Power
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>

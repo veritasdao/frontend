@@ -18,6 +18,7 @@ import useGetBalance from "@/hooks/getBalance";
 import { formatUnits, parseUnits } from "viem";
 import { DAOABI, DAOToken, IDRXABI, IDRXToken } from "@/config/DAO";
 import Link from "next/link";
+import { toast } from "sonner";
 
 type valueFormType = {
   amount: string;
@@ -54,6 +55,12 @@ export default function StakeForm() {
   } = useWaitForTransactionReceipt({
     hash: hash,
   });
+
+  React.useEffect(() => {
+    if (isSuccess && confirmed) {
+      toast.success("Stake berhasil");
+    }
+  }, [confirmed]);
 
   async function confirmStake(values: valueFormType) {
     try {
@@ -178,9 +185,9 @@ export default function StakeForm() {
             )}
           </section> */}
 
-          <section className="text-sm text-muted-foreground space-y-2">
+          <section className="text-sm  space-y-2">
             <div className="flex items-center justify-between">
-              <h1>IDRX to stake</h1>
+              <h1>IDRX to be locked</h1>
               <p>{parseFloat(formik.values.amount).toLocaleString()} IDRX</p>
             </div>
             {/* <div className="flex items-center justify-between">
@@ -192,6 +199,12 @@ export default function StakeForm() {
               <div className="flex items-center gap-1">
                 <p>{parseFloat(formik.values.amount).toLocaleString()}</p>
                 <Zap size={15} />
+              </div>
+            </div>
+            <div className="flex items-center justify-between italic text-muted-foreground">
+              <h1>Estimated daily return (soon)</h1>
+              <div className="flex items-center gap-1">
+                <p>1000 IDRX</p>
               </div>
             </div>
           </section>
@@ -214,7 +227,7 @@ export default function StakeForm() {
                   )
               }
             >
-              {isPending ? (
+              {isPending || confirming ? (
                 <p className="flex gap-1">
                   Confirming <LoaderCircle className="animate-spin" />
                 </p>
@@ -242,8 +255,7 @@ export default function StakeForm() {
             </Button>
           )}
         </CardFooter>
-        <div className="max-w-5xl mx-auto text-center">
-          {confirmed && <p>Transaction approved!</p>}
+        <div className="max-w-5xl mx-auto text-center space-y-2">
           {failureReason && (
             <p className="max-w-xl">Error: {failureReason?.toString()}</p>
           )}

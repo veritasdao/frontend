@@ -18,9 +18,12 @@ export default function CommunityCard() {
 
   const filteredProposals = React.useMemo(() => {
     if (!proposals) return [];
-    return proposals.sort(
-      (a, b) => Number(b.votingDeadline) - Number(a.votingDeadline)
-    );
+    return proposals
+      .filter(
+        (proposal) =>
+          proposal.tokenAddress !== "0x0000000000000000000000000000000000000000"
+      )
+      .sort((a, b) => Number(b.votingDeadline) - Number(a.votingDeadline));
   }, [proposals]);
 
   return (

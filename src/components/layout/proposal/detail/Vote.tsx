@@ -89,7 +89,7 @@ export default function Vote({ index }: { index: number }) {
         </Button>
       </div>
       <div className="flex justify-between">
-        <p className="text-sm">Jumlah (Hak Suara)</p>
+        <p className="text-sm">Amount (Voting Power)</p>
         {balanceVotingPower ? (
           <p className="text-muted-foreground flex gap-1">
             <span className="font-bold">
@@ -107,7 +107,7 @@ export default function Vote({ index }: { index: number }) {
       </div>
       <div>
         <Input
-          placeholder="Contoh: 10000"
+          placeholder="Example: 10000"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
@@ -120,26 +120,26 @@ export default function Vote({ index }: { index: number }) {
       >
         {isPending || confirming ? (
           <p className="flex gap-1">
-            Mengkonfirmasi <LoaderCircle className="animate-spin" />
+            Confirming <LoaderCircle className="animate-spin" />
           </p>
         ) : (
-          "Konfirmasi Vote"
+          "Confirm Vote"
         )}
       </Button>
 
       <div className="max-w-5xl mx-auto text-center">
-        {confirming && <p>Mengkonfirmasi transasi...</p>}
-        {confirmed && <p>Transaksi disetujui!</p>}
+        {confirming && <p>Confirming transaction...</p>}
+        {confirmed && <p>Transaction confirmed!</p>}
         {isError && <p>Error: {failureReason?.toString()}</p>}
         {isReceiptError && <p>Error: {receiptFailureReason?.toString()}</p>}
-        {isSuccess && confirmed && <p>Transaksi telah dikonfimasi!</p>}
+        {isSuccess && confirmed && <p>Transaction has been confirmed!</p>}
         {isSuccess && !confirming && (
           <div>
             <Link
               href={`https://sepolia-blockscout.lisk.com/tx/${hash}`}
               target="_blank"
             >
-              <Button variant={"outline"}>Lihat Detail Transaksi</Button>
+              <Button variant={"outline"}>View Transaction Details</Button>
             </Link>
           </div>
         )}

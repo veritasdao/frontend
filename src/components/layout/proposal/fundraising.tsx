@@ -62,7 +62,7 @@ export default function Fundraising({ index }: { index: number }) {
   return (
     <div className="border p-5 rounded-md space-y-3">
       <div className="flex justify-between">
-        <p className="text-sm">Jumlah (IDRX)</p>
+        <p className="text-sm">Amount (IDRX)</p>
         {balanceIDRX ? (
           <p className="text-muted-foreground flex gap-1">
             <Wallet strokeWidth={1} />
@@ -80,7 +80,7 @@ export default function Fundraising({ index }: { index: number }) {
         )}
       </div>
       <Input
-        placeholder="Contoh: 10000"
+        placeholder="Example: 10000"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
       />
@@ -98,18 +98,18 @@ export default function Fundraising({ index }: { index: number }) {
       </Button>
 
       <div className="max-w-5xl mx-auto text-center">
-        {confirming && <p>Mengkonfirmasi transasi...</p>}
-        {confirmed && <p>Transaksi disetujui!</p>}
+        {confirming && <p>Confirming transaction...</p>}
+        {confirmed && <p>Transaction confirmed!</p>}
         {isError && <p>Error: {failureReason?.toString()}</p>}
         {isReceiptError && <p>Error: {receiptFailureReason?.toString()}</p>}
-        {isSuccess && confirmed && <p>Transaksi telah dikonfimasi!</p>}
+        {isSuccess && confirmed && <p>Transaction has been confirmed!</p>}
         {isSuccess && !confirming && (
           <div>
             <Link
               href={`https://sepolia-blockscout.lisk.com/tx/${hash}`}
               target="_blank"
             >
-              <Button variant={"outline"}>Lihat Detail Transaksi</Button>
+              <Button variant={"outline"}>View Transaction Details</Button>
             </Link>
           </div>
         )}
