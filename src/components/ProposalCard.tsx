@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { MagicCard } from "./magicui/magic-card";
 
 export default function ProposalCard() {
   const { proposals, isLoading } = useGetProposals();
@@ -125,50 +126,52 @@ export default function ProposalCard() {
               href={`/proposal/${proposals.length - 1 - index}`}
               key={index}
             >
-              <Card className="pt-0 hover:bg-secondary/20 duration-300">
-                <Image
-                  src={proposal.image}
-                  alt="Proposal Image"
-                  width={1920}
-                  height={1080}
-                  className="object-cover aspect-video rounded-md"
-                  priority={true}
-                />
-                <CardHeader>
-                  <StatusBadge index={index} />
-                  <CardTitle className="truncate">{proposal.title}</CardTitle>
-                  <CardDescription className="line-clamp-2">
-                    {proposal.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {proposal.approved ? (
-                    <div className="mt-2">
-                      <p className="text-xs text-muted-foreground">
-                        Total Fundraising Amount
-                      </p>
-                      <NumberTicker
-                        className="font-bold text-3xl"
-                        value={
-                          totalFundraising
-                            ? parseFloat(
-                                formatUnits(
-                                  BigInt(totalFundraising as bigint),
-                                  2
+              <MagicCard>
+                <Card className="pt-0 hover:bg-secondary/20 duration-300">
+                  <Image
+                    src={proposal.image}
+                    alt="Proposal Image"
+                    width={1920}
+                    height={1080}
+                    className="object-cover aspect-video rounded-md"
+                    priority={true}
+                  />
+                  <CardHeader>
+                    <StatusBadge index={index} />
+                    <CardTitle className="truncate">{proposal.title}</CardTitle>
+                    <CardDescription className="line-clamp-2">
+                      {proposal.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {proposal.approved ? (
+                      <div className="mt-2">
+                        <p className="text-xs text-muted-foreground">
+                          Total Fundraising Amount
+                        </p>
+                        <NumberTicker
+                          className="font-bold text-3xl"
+                          value={
+                            totalFundraising
+                              ? parseFloat(
+                                  formatUnits(
+                                    BigInt(totalFundraising as bigint),
+                                    2
+                                  )
                                 )
-                              )
-                            : 0
-                        }
-                      />
-                      IDRX
-                    </div>
-                  ) : (
-                    <p className="text-sm text-[#3b82f6]">
-                      Funding Not Started Yet
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
+                              : 0
+                          }
+                        />
+                        IDRX
+                      </div>
+                    ) : (
+                      <p className="text-sm text-[#3b82f6]">
+                        Funding Not Started Yet
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </MagicCard>
             </Link>
           );
         })}

@@ -18,7 +18,6 @@ import Link from "next/link";
 import useGetVotingPower from "@/hooks/getVotingPower";
 import { IDRXToken } from "@/config/DAO";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { useAccount } from "wagmi";
 import { IDRXABI } from "@/config/DAO";
 import { toast } from "sonner";
 import React from "react";
@@ -30,8 +29,6 @@ export const ConnectButtonCustom = () => {
     if (!balance) return "0";
     return formatUnits(balance, 2);
   }
-
-  const { address } = useAccount();
 
   const {
     data: hash,

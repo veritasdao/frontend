@@ -1,7 +1,7 @@
 "use client";
-import { IDRXABI, IDRXToken } from "@/config/DAO";
+import { IDRXABI } from "@/config/DAO";
 import React from "react";
-import { useAccount, useBalance, useReadContract } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 
 export default function useGetTokenDAOBalance({
   tokenAddress,

@@ -12,7 +12,7 @@ export default function Hero() {
       </span>
       <h1 className="xl:text-2xl font-medium text-muted-foreground xl:w-1/2">
         Supporting Builders and Innovators Through Community-Based Decentralized
-        Funding.
+        Crowdfunding.
       </h1>
       <AvatarUser />
       <Link href={"/proposal"} target="_blank">

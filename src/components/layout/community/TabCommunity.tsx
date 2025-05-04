@@ -25,25 +25,25 @@ export default function TabCommunity({ index }: { index: number }) {
   );
 }
 
-const messages = [
-  {
-    id: "1",
-    sender: "0x1234567890abcdef1234567890abcdef12345678",
-    content: "Hello! How's it going?",
-    timestamp: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
-  },
-  {
-    id: "2",
-    sender: "0x9876543210fedcba9876543210fedcba98765432",
-    content: "Just checking out this new dApp. Looks interesting!",
-    timestamp: new Date(Date.now() - 1800000).toISOString(), // 30 minutes ago
-    isCurrentUser: true,
-  },
-  {
-    id: "3",
-    sender: "0x1234567890abcdef1234567890abcdef12345678",
-    content:
-      "Thanks! We just launched it yesterday. Let me know if you have any questions.",
-    timestamp: new Date(Date.now() - 900000).toISOString(), // 15 minutes ago
-  },
-];
+// const messages = [
+//   {
+//     id: "1",
+//     sender: "0x1234567890abcdef1234567890abcdef12345678",
+//     content: "Hello! How's it going?",
+//     timestamp: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
+//   },
+//   {
+//     id: "2",
+//     sender: "0x9876543210fedcba9876543210fedcba98765432",
+//     content: "Just checking out this new dApp. Looks interesting!",
+//     timestamp: new Date(Date.now() - 1800000).toISOString(), // 30 minutes ago
+//     isCurrentUser: true,
+//   },
+//   {
+//     id: "3",
+//     sender: "0x1234567890abcdef1234567890abcdef12345678",
+//     content:
+//       "Thanks! We just launched it yesterday. Let me know if you have any questions.",
+//     timestamp: new Date(Date.now() - 900000).toISOString(), // 15 minutes ago
+//   },
+// ];

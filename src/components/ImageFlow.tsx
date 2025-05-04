@@ -12,7 +12,7 @@ export function ImageFlow() {
         <div className="bg-secondary p-5 w-full space-y-5 rounded-md">
           <h1 className="text-4xl font-bold">User Flow</h1>
           <Image
-            src="/images/user flow.png"
+            src="/images/userflow-eraser.png"
             alt="Flow"
             width={1920}
             height={1080}
@@ -28,7 +28,7 @@ export function ImageFlow() {
         <div className="bg-secondary p-5 w-full space-y-5 rounded-md">
           <h1 className="text-4xl font-bold">Builder Flow</h1>
           <Image
-            src="/images/user flow.png"
+            src="/images/builderflow-eraser.png"
             alt="Flow"
             width={1920}
             height={1080}

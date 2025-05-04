@@ -10,7 +10,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import type { TooltipProps } from "recharts";
 import {
   Card,
   CardContent,
@@ -135,8 +134,10 @@ export function ChartVoter({ index }: { index: number }) {
   const trendingPercentage = calculateTrendingPercentage();
   const isTrendingUp = trendingPercentage > 0;
 
-  const formatValue = (value: any): string => {
-    const numValue = Number(value) || 0;
+  const formatValue = (
+    value: number | string | (number | string)[]
+  ): string => {
+    const numValue = Array.isArray(value) ? Number(value[0]) : Number(value);
     return `${numValue > 0 ? "+" : ""}${numValue.toLocaleString()}`;
   };
 

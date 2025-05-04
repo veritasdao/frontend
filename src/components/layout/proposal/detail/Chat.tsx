@@ -14,14 +14,6 @@ import { createClient } from "@/config/supabase";
 import { toast } from "sonner";
 import useGetDetailProposals from "@/hooks/getDetailProposal";
 
-interface Discussion {
-  id: number;
-  title: string;
-  description: string;
-  created_at: string;
-  updated_at: string;
-}
-
 interface ChatMessage {
   id: string;
   discussion_id: number;

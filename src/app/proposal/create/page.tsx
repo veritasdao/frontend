@@ -9,8 +9,8 @@ export default function page() {
           Turn Your Innovation Into Reality. Start Here!
         </h1>
         <h2 className="text-muted-foreground  mx-auto">
-          Fill out the following form to submit a project proposal that's ready
-          to be supported and realized together with Veritas DAO.
+          Fill out the following form to submit a project proposal that&apos;s
+          ready to be supported and realized together with Veritas DAO.
         </h2>
       </div>
       <Form />

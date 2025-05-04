@@ -60,7 +60,7 @@ export default function StakeForm() {
     if (isSuccess && confirmed) {
       toast.success("Stake berhasil");
     }
-  }, [confirmed]);
+  }, [confirmed, isSuccess]);
 
   async function confirmStake(values: valueFormType) {
     try {
