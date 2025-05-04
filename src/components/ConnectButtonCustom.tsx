@@ -4,7 +4,7 @@ import { ConnectButton } from "@xellar/kit";
 import { Button } from "./ui/button";
 import { GlobeLock, Loader2, Plus, User, Wallet, Zap } from "lucide-react";
 import useGetBalance from "@/hooks/getBalance";
-import { formatUnits, parseUnits } from "viem";
+import { formatUnits } from "viem";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -14,13 +14,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Link from "next/link";
 import useGetVotingPower from "@/hooks/getVotingPower";
-import { IDRXToken } from "@/config/DAO";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { IDRXABI } from "@/config/DAO";
 import { toast } from "sonner";
 import React from "react";
+import { AirdropABI, AirdropToken } from "@/config/Airdrop";
+
 export const ConnectButtonCustom = () => {
   const { balanceIDRX, balanceNative } = useGetBalance();
   const { balanceVotingPower } = useGetVotingPower();
@@ -49,7 +55,7 @@ export const ConnectButtonCustom = () => {
 
   React.useEffect(() => {
     if (confirmed) {
-      toast.success("Transfer IDRX berhasil");
+      toast.success("Airdrop Send Success");
     }
     if (isReceiptError) {
       toast.error(
@@ -60,31 +66,24 @@ export const ConnectButtonCustom = () => {
     }
   }, [confirmed, isReceiptError, receiptFailureReason]);
 
-  async function transferIDRX() {
+  async function transferAirdrop() {
+    if (parseFloat(balanceNative?.formatted || "0") === 0) {
+      toast.error("Please add ETH balance first");
+      return;
+    }
     try {
       if (isSuccess) {
         toast.success("Previous transaction successful");
       }
       await writeContractAsync({
-        abi: IDRXABI,
-        address: IDRXToken,
-        functionName: "approve",
-        args: [IDRXToken, parseUnits("20000", 2)],
-      });
-      await writeContractAsync({
-        abi: IDRXABI,
-        address: IDRXToken,
-        functionName: "transferFrom",
-        args: [
-          "0x91472E17C35e0674236E369f13f161990C656686",
-          "0x03F7219c8A16E4aC9Cacf37c82df3A2cD631dEcC",
-          parseUnits("20000", 2),
-        ],
+        abi: AirdropABI,
+        address: AirdropToken,
+        functionName: "claim",
       });
     } catch (error) {
-      console.error("Error staking:", error);
+      toast.error(`Error Airdrop Send: ${error}`);
       if (failureReason) {
-        toast.error(`Transaction failed: ${failureReason.message}`);
+        toast.error(`Airdrop Send failed: ${failureReason.message}`);
       }
     }
   }
@@ -178,8 +177,8 @@ export const ConnectButtonCustom = () => {
                 <DropdownMenuLabel>Add Token Balance</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={transferIDRX}
-                  disabled
+                  onClick={transferAirdrop}
+                  // disabled={parseFloat(balanceNative?.formatted || "0") === 0}
                   className="flex items-center gap-2"
                 >
                   <Plus />
@@ -187,6 +186,17 @@ export const ConnectButtonCustom = () => {
                     <p className="text-sm flex items-center gap-1">
                       Confirming <Loader2 className="w-4 h-4 animate-spin" />
                     </p>
+                  ) : parseFloat(balanceNative?.formatted || "0") === 0 ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <span>IDRX Testnet</span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Please add ETH balance first</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   ) : (
                     "IDRX Testnet"
                   )}
