@@ -51,7 +51,7 @@ export default function Vote({ index }: { index: number }) {
     hash: hash,
   });
 
-  async function sendDonation() {
+  async function sendVote() {
     try {
       await writeContractAsync({
         abi: IDRXABI,
@@ -79,13 +79,13 @@ export default function Vote({ index }: { index: number }) {
           variant={vote === true ? "default" : "outline"}
           onClick={() => chooseVote(true)}
         >
-          Setuju
+          Agree
         </Button>
         <Button
           variant={vote === false ? "default" : "outline"}
           onClick={() => chooseVote(false)}
         >
-          Tidak Setuju
+          Disagree
         </Button>
       </div>
       <div className="flex justify-between">
@@ -113,15 +113,25 @@ export default function Vote({ index }: { index: number }) {
         />
       </div>
       <Button
-        onClick={sendDonation}
+        onClick={sendVote}
         disabled={
-          isPending || confirming || confirmed || !amount || Boolean(voted)
+          isPending ||
+          confirming ||
+          confirmed ||
+          !amount ||
+          Boolean(voted) ||
+          vote === null ||
+          Number(amount) >
+            Number(formatUnits(BigInt(balanceVotingPower as bigint), 2))
         }
       >
         {isPending || confirming ? (
           <p className="flex gap-1">
             Confirming <LoaderCircle className="animate-spin" />
           </p>
+        ) : Number(amount) >
+          Number(formatUnits(BigInt(balanceVotingPower as bigint), 2)) ? (
+          "Insufficient Balance Voting Power"
         ) : (
           "Confirm Vote"
         )}

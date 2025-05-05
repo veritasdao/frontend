@@ -16,6 +16,8 @@ type ProposalDetailType = {
   keuntungan: string;
   tantangan: string;
   dampakdanhasil: string;
+  name: string;
+  symbol: string;
   proposer: string;
   requestedAmount: number;
   votingDeadline: number;
