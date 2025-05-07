@@ -1,121 +1,214 @@
 "use client";
 
 import useGetDetailProposals from "@/hooks/getDetailProposal";
-import useGetStatusProposal from "@/hooks/getStatusProposal";
 import { cn } from "@/lib/utils";
+import moment from "moment";
+import { Button } from "./ui/button";
+import useGetTokenInfo from "@/hooks/getTokenInfo";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { toast } from "sonner";
+import React from "react";
+import { DAOToken } from "@/config/DAO";
+import { DAOABI } from "@/config/DAO";
 
 type StatusBarProps = {
   index: number;
 };
 
 export default function StatusBar({ index }: StatusBarProps) {
-  const { statusProposal } = useGetStatusProposal(index);
   const { proposal } = useGetDetailProposals(index);
+  const { tokenInfo } = useGetTokenInfo({ index });
+  const {
+    writeContractAsync,
+    data: hash,
+    isPending,
+    // isSuccess,
+  } = useWriteContract();
 
-  const getStatus = () => {
-    if (!statusProposal || !proposal) return "Loading...";
+  const { data: receipt, isLoading: isLoadingReceipt } =
+    useWaitForTransactionReceipt({
+      hash: hash,
+    });
 
-    // Case 1: Voting
-    if (
-      statusProposal.isActive &&
-      !statusProposal.isExecuted &&
-      !statusProposal.isApproved &&
-      statusProposal.timeLeft > 0
-    ) {
-      return "Voting";
+  React.useEffect(() => {
+    if (receipt?.status === "success") {
+      toast.success("Proposal executed successfully");
     }
+  }, [receipt]);
 
-    // Case 2: Fundraising (only if voting was successful)
-    if (
-      !statusProposal.isActive &&
-      statusProposal.isExecuted &&
-      statusProposal.isApproved &&
-      statusProposal.timeLeft > 0 &&
-      proposal.yesVotes > proposal.noVotes
-    ) {
-      return "Fundraising";
-    }
+  const votingDeadline = moment(Number(proposal.votingDeadline) * 1000);
+  const fundraisingDeadline = moment(
+    Number(proposal.fundraisingDeadline) * 1000
+  );
+  const now = moment();
 
-    // Case 3: Final Stage (Approved or Rejected)
-    if (statusProposal.timeLeft <= 0) {
-      if (proposal.yesVotes > proposal.noVotes) {
-        return "Approved";
-      } else {
-        return "Rejected";
-      }
-    }
+  let status = "";
 
-    return "Loading...";
-  };
+  // Determine status with possible progression from Rejected to Approved
+  if (votingDeadline.isAfter(now) && !proposal.executed) {
+    status = "Voting";
+  } else if (
+    proposal.executed &&
+    proposal.yesVotes > proposal.noVotes &&
+    fundraisingDeadline.isAfter(now)
+  ) {
+    status = "Fundraising";
+  } else if (
+    proposal.executed &&
+    proposal.yesVotes > proposal.noVotes &&
+    fundraisingDeadline.isBefore(now)
+  ) {
+    status = "Create Community";
+  } else if (
+    !proposal.executed &&
+    !proposal.approved &&
+    (proposal.yesVotes < proposal.noVotes ||
+      proposal.yesVotes === proposal.noVotes) &&
+    votingDeadline.isBefore(now)
+  ) {
+    status = "Rejected";
+  }
 
-  const status = getStatus();
-
-  const stages = [
-    { id: "voting", label: "Voting" },
-    { id: "fundraising", label: "Fundraising" },
-    { id: "final", label: "Final" },
-  ];
+  // Dynamically build stages based on proposal outcome
+  let stages;
+  if (
+    !proposal.executed &&
+    !proposal.approved &&
+    (proposal.yesVotes < proposal.noVotes ||
+      proposal.yesVotes === proposal.noVotes) &&
+    votingDeadline.isBefore(now)
+  ) {
+    // Voting failed: Voting -> Rejected
+    stages = [
+      { id: "Voting", label: "Voting" },
+      { id: "Rejected", label: "Rejected" },
+    ];
+  } else {
+    // Voting passed: Voting -> Fundraising -> Approved
+    stages = [
+      { id: "Voting", label: "Voting" },
+      { id: "Fundraising", label: "Fundraising" },
+      { id: "Create Community", label: "Create Community" },
+    ];
+  }
 
   const getStageStatus = (stageId: string) => {
-    switch (status) {
-      case "Voting":
-        return stageId === "voting" ? "active" : "pending";
-      case "Fundraising":
-        return stageId === "fundraising"
-          ? "active"
-          : stageId === "voting"
-          ? "completed"
-          : "pending";
-      case "Approved":
-        return stageId === "final" ? "completed" : "completed";
-      case "Rejected":
-        return stageId === "final"
-          ? "rejected"
-          : stageId === "voting"
-          ? "completed"
-          : "inactive";
-      default:
-        return "inactive";
+    const stageOrder = [
+      "Voting",
+      "Fundraising",
+      "Create Community",
+      "Rejected",
+    ];
+    const currentStageIndex = stageOrder.indexOf(status);
+    const thisStageIndex = stageOrder.indexOf(stageId);
+
+    if (thisStageIndex < currentStageIndex) {
+      return "completed";
+    } else if (thisStageIndex === currentStageIndex) {
+      return "active";
+    } else {
+      return "inactive";
     }
   };
 
+  async function executeProposal() {
+    if (proposal?.executed) {
+      toast.error("Proposal has already been executed");
+      return;
+    }
+    try {
+      await writeContractAsync({
+        address: DAOToken,
+        abi: DAOABI,
+        functionName: "executeProposal",
+        args: [index],
+      });
+      toast.success("Proposal execution started");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to execute proposal");
+    }
+  }
+
+  async function finalizeProposal() {
+    if (tokenInfo?.distributed) {
+      toast.error("Community has already been created");
+      return;
+    }
+    try {
+      await writeContractAsync({
+        address: DAOToken,
+        abi: DAOABI,
+        functionName: "finalizeProposal",
+        args: [index],
+      });
+      toast.success("Proposal finalization started");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to finalize proposal");
+    }
+  }
+
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between mb-2">
+    <div className="space-y-5">
+      <h1 className="text-lg font-bold">Proposal Status</h1>
+      <div className="flex flex-col gap-5">
         {stages.map((stage, index) => (
-          <div key={stage.id} className="flex flex-col items-center">
+          <div key={stage.id} className="flex items-center gap-5">
             <div
               className={cn(
                 "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
                 getStageStatus(stage.id) === "active" &&
                   "bg-primary text-primary-foreground",
                 getStageStatus(stage.id) === "completed" &&
-                  "bg-green-500 text-white",
-                getStageStatus(stage.id) === "rejected" &&
-                  "bg-destructive text-destructive-foreground",
-                getStageStatus(stage.id) === "pending" &&
-                  "bg-secondary text-white",
+                  "bg-[#1d4ed8] text-white",
                 getStageStatus(stage.id) === "inactive" &&
-                  "bg-muted text-muted-foreground"
+                  "bg-muted text-muted-foreground",
+                stage.id === "Rejected" &&
+                  getStageStatus(stage.id) === "active" &&
+                  "bg-red-500 text-white"
               )}
             >
               {index + 1}
             </div>
-            <span className="text-xs mt-1 text-center">{stage.label}</span>
+            <div className="flex items-center gap-5">
+              <p
+                className={cn(
+                  getStageStatus(stage.id) === "active" && "text-primary",
+                  getStageStatus(stage.id) === "completed" && "opacity-50"
+                )}
+              >
+                {stage.label}
+              </p>
+              {stage.id === "Voting" &&
+                getStageStatus(stage.id) === "active" && (
+                  <Button
+                    onClick={executeProposal}
+                    disabled={
+                      isPending || proposal?.executed || isLoadingReceipt
+                    }
+                  >
+                    {/* {isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : null} */}
+                    Start Fundraising
+                  </Button>
+                )}
+              {stage.id === "Create Community" &&
+                getStageStatus(stage.id) === "active" &&
+                !tokenInfo?.distributed && (
+                  <Button
+                    onClick={finalizeProposal}
+                    disabled={
+                      isPending || proposal?.executed || isLoadingReceipt
+                    }
+                  >
+                    Finalize Proposal
+                  </Button>
+                )}
+            </div>
           </div>
         ))}
-      </div>
-      <div className="relative">
-        <div className="absolute top-0 left-0 right-0 h-0.5 bg-muted" />
-        <div
-          className={cn(
-            "absolute top-0 left-0 h-1 transition-all duration-300",
-            status === "Voting" && "w-1/3 bg-primary",
-            status === "Fundraising" && "w-2/3 bg-primary",
-            (status === "Approved" || status === "Rejected") &&
-              "w-full bg-primary"
-          )}
-        />
       </div>
     </div>
   );

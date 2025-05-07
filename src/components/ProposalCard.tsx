@@ -2,12 +2,12 @@
 import useGetProposals from "@/hooks/getProposal";
 import Image from "next/image";
 import React from "react";
-import { formatUnits } from "viem";
+// import { formatUnits } from "viem";
 import Link from "next/link";
-import { NumberTicker } from "./magicui/number-ticker";
-import { useReadContract } from "wagmi";
-import { DAOABI, DAOToken } from "@/config/DAO";
-import StatusBadge from "./StatusBadge";
+// import { NumberTicker } from "./magicui/number-ticker";
+// import { useReadContract } from "wagmi";
+// import { DAOABI, DAOToken } from "@/config/DAO";
+// import StatusBadge from "./StatusBadge";
 import {
   Card,
   CardContent,
@@ -15,7 +15,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import useGetStatusProposal from "@/hooks/getStatusProposal";
 import {
   Select,
   SelectContent,
@@ -24,62 +23,58 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MagicCard } from "./magicui/magic-card";
+import moment from "moment";
+import Status from "@/lib/Status";
+import { Badge } from "./ui/badge";
 
 export default function ProposalCard() {
   const { proposals, isLoading } = useGetProposals();
-  const [index, setIndex] = React.useState<number | null>(null);
+  // const [index, setIndex] = React.useState<number | null>(null);
   const [filter, setFilter] = React.useState<string>("all");
 
-  React.useEffect(() => {
-    if (proposals && proposals.length > 0) {
-      setIndex(proposals.length - 1);
-    }
-  }, [proposals]);
-
-  const { statusProposal } = useGetStatusProposal(index);
-  const { data: totalFundraising, refetch } = useReadContract({
-    abi: DAOABI,
-    address: DAOToken,
-    functionName: "getTotalFundraising",
-    args: [index],
-  });
-
-  React.useEffect(() => {
-    refetch();
-  }, [refetch]);
+  // React.useEffect(() => {
+  //   if (proposals && proposals.length > 0) {
+  //     setIndex(proposals.length - 1);
+  //   }
+  // }, [proposals]);
 
   const filteredProposals = React.useMemo(() => {
     if (!proposals) return [];
     return proposals
       .sort((a, b) => Number(b.votingDeadline) - Number(a.votingDeadline))
       .filter((proposal) => {
-        // Determine status for each proposal
+        if (isLoading || !proposal) {
+          return <span className="text-muted-foreground">Loading...</span>;
+        }
+
+        const votingDeadline = moment(Number(proposal.votingDeadline) * 1000);
+        const fundraisingDeadline = moment(
+          Number(proposal.fundraisingDeadline) * 1000
+        );
+        const now = moment();
+
         let proposalStatus = "";
-        if (
-          statusProposal?.isActive &&
-          !statusProposal?.isExecuted &&
-          !statusProposal?.isApproved &&
-          statusProposal?.timeLeft > 0
-        ) {
+
+        if (votingDeadline.isAfter(now) && !proposal.executed) {
           proposalStatus = "Voting";
         } else if (
-          !statusProposal?.isActive &&
-          statusProposal?.isExecuted &&
-          statusProposal?.isApproved &&
-          statusProposal?.timeLeft > 0 &&
-          proposal.yesVotes > proposal.noVotes
+          proposal.executed &&
+          proposal.yesVotes > proposal.noVotes &&
+          fundraisingDeadline.isAfter(now)
         ) {
           proposalStatus = "Fundraising";
         } else if (
-          statusProposal?.timeLeft !== undefined &&
-          statusProposal.timeLeft <= 0 &&
-          proposal.yesVotes > proposal.noVotes
+          proposal.executed &&
+          proposal.yesVotes > proposal.noVotes &&
+          fundraisingDeadline.isBefore(now)
         ) {
           proposalStatus = "Approved";
         } else if (
-          statusProposal?.timeLeft !== undefined &&
-          statusProposal.timeLeft <= 0 &&
-          proposal.noVotes > proposal.yesVotes
+          !proposal.executed &&
+          !proposal.approved &&
+          (proposal.yesVotes < proposal.noVotes ||
+            proposal.yesVotes === proposal.noVotes) &&
+          votingDeadline.isBefore(now)
         ) {
           proposalStatus = "Rejected";
         }
@@ -92,7 +87,7 @@ export default function ProposalCard() {
         if (filter === "rejected" && proposalStatus === "Rejected") return true;
         return false;
       });
-  }, [proposals, filter, statusProposal]);
+  }, [proposals, filter, isLoading]);
 
   return (
     <>
@@ -137,38 +132,19 @@ export default function ProposalCard() {
                     priority={true}
                   />
                   <CardHeader>
-                    <StatusBadge index={index} />
+                    {filter === "all" && (
+                      <Badge variant="outline">
+                        <Status index={index} />
+                      </Badge>
+                    )}
                     <CardTitle className="truncate">{proposal.title}</CardTitle>
                     <CardDescription className="line-clamp-2">
-                      {proposal.description}
+                      {proposal.proposer.slice(0, 5)}...
+                      {proposal.proposer.slice(-5)}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {proposal.approved ? (
-                      <div className="mt-2">
-                        <p className="text-xs text-muted-foreground">
-                          Total Fundraising Amount
-                        </p>
-                        <NumberTicker
-                          className="font-bold text-3xl"
-                          value={
-                            totalFundraising
-                              ? parseFloat(
-                                  formatUnits(
-                                    BigInt(totalFundraising as bigint),
-                                    2
-                                  )
-                                )
-                              : 0
-                          }
-                        />
-                        IDRX
-                      </div>
-                    ) : (
-                      <p className="text-sm text-[#3b82f6]">
-                        Funding Not Started Yet
-                      </p>
-                    )}
+                    <p className="line-clamp-2">{proposal.description}</p>
                   </CardContent>
                 </Card>
               </MagicCard>

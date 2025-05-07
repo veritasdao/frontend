@@ -85,24 +85,41 @@ export default function Fundraising({ index }: { index: number }) {
         onChange={(e) => setAmount(e.target.value)}
       />
       <Button
+        className="w-full"
+        variant={
+          Number(amount) > Number(formatUnits(BigInt(balanceIDRX as bigint), 2))
+            ? "outline"
+            : "default"
+        }
         onClick={sendDonation}
-        disabled={isPending || confirming || confirmed || !amount}
+        disabled={
+          isPending ||
+          confirming ||
+          confirmed ||
+          !amount ||
+          Number(amount) > Number(formatUnits(BigInt(balanceIDRX as bigint), 2))
+        }
       >
         {isPending || confirming ? (
           <p className="flex gap-1">
-            Mengkonfirmasi <LoaderCircle className="animate-spin" />
+            Confirming <LoaderCircle className="animate-spin" />
           </p>
+        ) : Number(amount) >
+          Number(formatUnits(BigInt(balanceIDRX as bigint), 2)) ? (
+          <p className="text-destructive">Insufficient Balance IDRX</p>
         ) : (
-          "Konfirmasi Fundraising"
+          "Confirm Fundraising"
         )}
       </Button>
 
-      <div className="max-w-5xl mx-auto text-center">
-        {confirming && <p>Confirming transaction...</p>}
-        {confirmed && <p>Transaction confirmed!</p>}
-        {isError && <p>Error: {failureReason?.toString()}</p>}
-        {isReceiptError && <p>Error: {receiptFailureReason?.toString()}</p>}
-        {isSuccess && confirmed && <p>Transaction has been confirmed!</p>}
+      <section className="max-w-5xl mx-auto text-center space-y-5">
+        <div>
+          {confirming && <p>Confirming transaction...</p>}
+          {confirmed && <p>Transaction confirmed!</p>}
+          {isError && <p>Error: {failureReason?.toString()}</p>}
+          {isReceiptError && <p>Error: {receiptFailureReason?.toString()}</p>}
+          {isSuccess && confirmed && <p>Transaction has been confirmed!</p>}
+        </div>
         {isSuccess && !confirming && (
           <div>
             <Link
@@ -113,7 +130,7 @@ export default function Fundraising({ index }: { index: number }) {
             </Link>
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

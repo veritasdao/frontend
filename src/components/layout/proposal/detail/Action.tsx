@@ -6,7 +6,6 @@ import TabAction from "./TabAction";
 import useGetTotalFundraising from "@/hooks/getTotalFundraising";
 import StatusBar from "@/components/StatusBar";
 import { Card } from "@/components/ui/card";
-import InteractProposal from "./InteractProposal";
 
 export default function Action({ index }: { index: number }) {
   const { proposal, isLoading } = useGetDetailProposals(index);
@@ -19,15 +18,18 @@ export default function Action({ index }: { index: number }) {
   return (
     <Card className=" p-5 rounded-md h-fit">
       <StatusBar index={index} />
-      <InteractProposal index={index} />
       <React.Fragment key={index}>
         <Amount
           requestedAmount={
-            proposal?.requestedAmount ? Number(proposal.requestedAmount) : null
+            proposal?.requestedAmount ? BigInt(proposal.requestedAmount) : null
           }
-          totalFundraising={totalFundraising ? Number(totalFundraising) : null}
+          totalFundraising={
+            totalFundraising ? BigInt(totalFundraising as bigint) : null
+          }
           totalVoter={totalVoter ? Number(totalVoter) : 0}
-          totalVoterPower={totalVoterPower ? Number(totalVoterPower) : 0}
+          totalVoterPower={
+            totalVoterPower ? BigInt(totalVoterPower) : BigInt(0)
+          }
           votingDeadline={
             proposal?.votingDeadline ? Number(proposal.votingDeadline) : 0
           }
@@ -38,6 +40,7 @@ export default function Action({ index }: { index: number }) {
           }
           yesVotes={proposal?.yesVotes ? Number(proposal.yesVotes) : 0}
           noVotes={proposal?.noVotes ? Number(proposal.noVotes) : 0}
+          isExecuted={proposal?.executed}
         />
         <hr />
         <TabAction index={index} />

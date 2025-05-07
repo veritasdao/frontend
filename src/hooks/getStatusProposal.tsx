@@ -8,14 +8,12 @@ type statusProposalType = {
   isActive: boolean;
   isExecuted: boolean;
   isApproved: boolean;
-  timeLeft: number;
 };
 
 type statusProposalRawData = [
   boolean, // isActive
   boolean, // isExecuted
-  boolean, // isApproved
-  number // timeLeft
+  boolean // isApproved
 ];
 export default function useGetStatusProposal(index: number | null) {
   const { data, isLoading, refetch } = useReadContract({
@@ -31,7 +29,6 @@ export default function useGetStatusProposal(index: number | null) {
         isActive: (data as unknown as statusProposalRawData)[0],
         isExecuted: (data as unknown as statusProposalRawData)[1],
         isApproved: (data as unknown as statusProposalRawData)[2],
-        timeLeft: (data as unknown as statusProposalRawData)[3],
       }
     : null;
   //   const statusProposal = data as statusProposalType[]; // ✅ cast ke tipe yang tepa

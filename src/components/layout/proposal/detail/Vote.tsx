@@ -113,6 +113,13 @@ export default function Vote({ index }: { index: number }) {
         />
       </div>
       <Button
+        className="w-full"
+        variant={
+          Number(amount) >
+          Number(formatUnits(BigInt(balanceVotingPower as bigint), 2))
+            ? "outline"
+            : "default"
+        }
         onClick={sendVote}
         disabled={
           isPending ||

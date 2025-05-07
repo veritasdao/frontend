@@ -2,57 +2,60 @@
 
 import { Badge } from "@/components/ui/badge";
 import useGetDetailProposals from "@/hooks/getDetailProposal";
-import useGetStatusProposal from "@/hooks/getStatusProposal";
+import moment from "moment";
 
 type StatusBadgeProps = {
   index: number;
 };
 
 export default function StatusBadge({ index }: StatusBadgeProps) {
-  const { statusProposal } = useGetStatusProposal(index);
   const { proposal } = useGetDetailProposals(index);
 
-  const getStatus = () => {
-    if (!statusProposal || !proposal) return "Loading...";
+  const votingDeadline = moment(Number(proposal.votingDeadline) * 1000);
+  const fundraisingDeadline = moment(
+    Number(proposal.fundraisingDeadline) * 1000
+  );
+  const now = moment();
 
-    // Case 1: Voting Phase
+  const getStatus = () => {
+    if (!proposal) return "Loading...";
+
+    // Voting Phase
     if (
-      statusProposal.isActive &&
-      !statusProposal.isExecuted &&
-      !statusProposal.isApproved &&
-      statusProposal.timeLeft > 0
+      !proposal.executed &&
+      !proposal.approved &&
+      votingDeadline.isAfter(now)
     ) {
       return "Voting";
     }
 
-    // Case 2: Check if voting ended unsuccessfully
+    // Voting ended unsuccessfully
     if (
-      statusProposal.timeLeft <= 0 &&
-      !statusProposal.isExecuted &&
-      !statusProposal.isApproved &&
+      votingDeadline.isBefore(now) &&
+      !proposal.executed &&
+      !proposal.approved &&
       proposal.noVotes > proposal.yesVotes
     ) {
       return "Rejected";
     }
 
-    // Case 3: Fundraising Phase
+    // Fundraising Phase
     if (
-      !statusProposal.isActive &&
-      statusProposal.isExecuted &&
-      statusProposal.isApproved &&
-      statusProposal.timeLeft > 0 &&
-      proposal.yesVotes > proposal.noVotes
+      proposal.executed &&
+      proposal.approved &&
+      proposal.yesVotes > proposal.noVotes &&
+      votingDeadline.isBefore(now) &&
+      fundraisingDeadline.isAfter(now)
     ) {
       return "Fundraising";
     }
 
-    // Case 4: Final Status (Approved or Rejected)
-    if (statusProposal.timeLeft <= 0) {
-      if (proposal.yesVotes > proposal.noVotes) {
-        return "Approved";
-      } else {
-        return "Rejected";
-      }
+    if (
+      proposal.yesVotes > proposal.noVotes &&
+      votingDeadline.isBefore(now) &&
+      fundraisingDeadline.isBefore(now)
+    ) {
+      return "Approved";
     }
 
     return "Loading...";
@@ -60,29 +63,23 @@ export default function StatusBadge({ index }: StatusBadgeProps) {
 
   const status = getStatus();
 
-  let color = "secondary"; // default gray
+  let color = ""; // default gray
   switch (status) {
     case "Voting":
-      color = "outline"; // yellow (custom)
+      color = ""; // yellow (custom)
       break;
     case "Fundraising":
-      color = "default"; // green (custom)
+      color = ""; // green (custom)
       break;
     case "Approved":
-      color = "default"; // green (custom)
+      color = "bg-[#166534] text-white"; // green (custom)
       break;
     case "Rejected":
-      color = "destructive"; // red (default shadcn)
+      color = "bg-[#991b1b] text-white"; // red (custom)
       break;
     default:
-      color = "secondary"; // gray
+      color = "bg-muted text-muted-foreground"; // gray
   }
 
-  return (
-    <Badge
-      variant={color as "secondary" | "default" | "destructive" | "outline"}
-    >
-      {status}
-    </Badge>
-  );
+  return <Badge className={`${color}`}>{status}</Badge>;
 }

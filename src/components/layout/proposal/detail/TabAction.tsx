@@ -2,63 +2,74 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Vote from "./Vote";
 import Fundraising from "../fundraising";
-import useGetStatusProposal from "@/hooks/getStatusProposal";
 import useGetDetailProposals from "@/hooks/getDetailProposal";
 import useGetHasVoted from "@/hooks/getHasVoted";
 import { injected, useAccount, useConnect } from "wagmi";
 import { Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import moment from "moment";
+import useGetTokenInfo from "@/hooks/getTokenInfo";
 export default function TabAction({ index }: { index: number }) {
   const { isConnected } = useAccount();
-  const { statusProposal } = useGetStatusProposal(index);
   const { proposal } = useGetDetailProposals(index);
   const { hasVoted } = useGetHasVoted(index);
   const { connect } = useConnect();
-  const getStatus = () => {
-    if (!statusProposal || !proposal) return "Loading...";
+  const { tokenInfo } = useGetTokenInfo({ index });
+  const votingDeadline = moment(Number(proposal.votingDeadline) * 1000);
+  const fundraisingDeadline = moment(
+    Number(proposal.fundraisingDeadline) * 1000
+  );
+  const now = moment();
 
-    // Case 1: Pemilihan
-    if (
-      statusProposal.isActive &&
-      !statusProposal.isApproved &&
-      statusProposal.timeLeft > 0
-    ) {
-      return "vote";
-    }
+  let status = "";
 
-    // Case 2: Fundraising
-    if (
-      !statusProposal.isActive &&
-      statusProposal.isExecuted &&
-      statusProposal.isApproved &&
-      statusProposal.timeLeft > 0 &&
-      proposal.yesVotes > proposal.noVotes
-    ) {
-      return "fundraising";
-    }
+  if (votingDeadline.isAfter(now) && !proposal.executed) {
+    status = "Voting";
+  } else if (
+    proposal.executed &&
+    proposal.yesVotes > proposal.noVotes &&
+    fundraisingDeadline.isAfter(now)
+  ) {
+    status = "Fundraising";
+  } else if (
+    proposal.executed &&
+    proposal.yesVotes > proposal.noVotes &&
+    fundraisingDeadline.isBefore(now)
+  ) {
+    status = "Approved";
+  } else if (
+    !proposal.executed &&
+    !proposal.approved &&
+    (proposal.yesVotes < proposal.noVotes ||
+      proposal.yesVotes === proposal.noVotes) &&
+    votingDeadline.isBefore(now)
+  ) {
+    status = "Rejected";
+  }
 
-    // Case 3: Rejected
-    if (
-      !statusProposal.isActive &&
-      !statusProposal.isExecuted &&
-      statusProposal.timeLeft <= 0 &&
-      proposal.noVotes > proposal.yesVotes
-    ) {
-      return "rejected";
-    }
+  if (tokenInfo?.distributed) {
+    return (
+      <div className="py-5 space-y-5">
+        <p className="text-muted-foreground text-sm">
+          Token has been distributed. You can claim your reward by clicking the
+          button below.
+        </p>
+        <Button>Claim Reward</Button>
+      </div>
+    );
+  }
+  if (status === "Rejected") {
+    return null;
+  }
 
-    return "Loading...";
-  };
-
-  const status = getStatus();
   return (
     <div>
-      <Tabs defaultValue={status === "fundraising" ? "fundraising" : "vote"}>
+      <Tabs defaultValue={status === "Fundraising" ? "fundraising" : "vote"}>
         <TabsList>
-          <TabsTrigger value="fundraising" disabled={status !== "fundraising"}>
+          <TabsTrigger value="fundraising" disabled={status !== "Fundraising"}>
             Fundraising
           </TabsTrigger>
-          <TabsTrigger value="vote" disabled={status !== "vote"}>
+          <TabsTrigger value="vote" disabled={status !== "Voting"}>
             Vote
           </TabsTrigger>
         </TabsList>
@@ -74,7 +85,6 @@ export default function TabAction({ index }: { index: number }) {
                     You have already voted on this proposal. Thank you for your
                     participation in the proposal voting.
                   </p>
-                  <Button disabled={!proposal?.executed}>Claim Reward</Button>
                   <p className="text-muted-foreground text-sm">
                     Note: If the proposal is approved, you will receive a reward
                     in the form of tokens from this community. This token can be
