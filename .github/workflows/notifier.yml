@@ -14,7 +14,7 @@ jobs:
             Announcement:
             updated Feature message: ${{ github.event.commits[0].message }}
 
-            website: https://frontend-veritas.vercel.app
+            website: https://veritasdao.xyz
             Repository: ${{ github.repository }}
             explore: https://bento.me/veritasdao
 
