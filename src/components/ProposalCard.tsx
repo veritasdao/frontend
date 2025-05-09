@@ -2,97 +2,159 @@
 import useGetProposals from "@/hooks/getProposal";
 import Image from "next/image";
 import React from "react";
-import moment from "moment";
-import { formatUnits } from "viem";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { formatUnits } from "viem";
 import Link from "next/link";
-import { NumberTicker } from "./magicui/number-ticker";
-import { useReadContract } from "wagmi";
-import { DAOABI, DAOToken } from "@/config/DAO";
+// import { NumberTicker } from "./magicui/number-ticker";
+// import { useReadContract } from "wagmi";
+// import { DAOABI, DAOToken } from "@/config/DAO";
+// import StatusBadge from "./StatusBadge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { MagicCard } from "./magicui/magic-card";
+import moment from "moment";
+import Status from "@/lib/Status";
+import { Badge } from "./ui/badge";
+import useGetAllProfile from "@/hooks/getAllProfile";
 
 export default function ProposalCard() {
   const { proposals, isLoading } = useGetProposals();
-  const [index, setIndex] = React.useState<number | null>(null);
+  const { profile: allProfile } = useGetAllProfile();
 
-  React.useEffect(() => {
-    if (proposals && proposals.length > 0) {
-      setIndex(proposals.length - 1);
-    }
-  }, [proposals]);
+  // const [index, setIndex] = React.useState<number | null>(null);
+  const [filter, setFilter] = React.useState<string>("all");
 
-  const {
-    data: totalDonations,
-    isLoading: loadingTotalDonations,
-    refetch,
-  } = useReadContract({
-    abi: DAOABI,
-    address: DAOToken,
-    functionName: "getTotalDonations",
-    args: [index],
-  });
+  // React.useEffect(() => {
+  //   if (proposals && proposals.length > 0) {
+  //     setIndex(proposals.length - 1);
+  //   }
+  // }, [proposals]);
 
-  React.useEffect(() => {
-    refetch();
-  }, [refetch]);
+  const filteredProposals = React.useMemo(() => {
+    if (!proposals) return [];
+    return proposals
+      .sort((a, b) => Number(b.votingDeadline) - Number(a.votingDeadline))
+      .filter((proposal) => {
+        if (isLoading || !proposal) {
+          return <span className="text-muted-foreground">Loading...</span>;
+        }
+
+        const votingDeadline = moment(Number(proposal.votingDeadline) * 1000);
+        const fundraisingDeadline = moment(
+          Number(proposal.fundraisingDeadline) * 1000
+        );
+        const now = moment();
+
+        let proposalStatus = "";
+
+        if (votingDeadline.isAfter(now) && !proposal.executed) {
+          proposalStatus = "Voting";
+        } else if (
+          proposal.executed &&
+          proposal.yesVotes > proposal.noVotes &&
+          fundraisingDeadline.isAfter(now)
+        ) {
+          proposalStatus = "Fundraising";
+        } else if (
+          proposal.executed &&
+          proposal.yesVotes > proposal.noVotes &&
+          fundraisingDeadline.isBefore(now)
+        ) {
+          proposalStatus = "Approved";
+        } else if (
+          !proposal.executed &&
+          !proposal.approved &&
+          (proposal.yesVotes < proposal.noVotes ||
+            proposal.yesVotes === proposal.noVotes) &&
+          votingDeadline.isBefore(now)
+        ) {
+          proposalStatus = "Rejected";
+        }
+
+        if (filter === "all") return true;
+        if (filter === "voting" && proposalStatus === "Voting") return true;
+        if (filter === "fundraising" && proposalStatus === "Fundraising")
+          return true;
+        if (filter === "approved" && proposalStatus === "Approved") return true;
+        if (filter === "rejected" && proposalStatus === "Rejected") return true;
+        return false;
+      });
+  }, [proposals, filter, isLoading]);
 
   return (
     <>
-      <h1 className="text-xl text-muted-foreground">
-        Menampilkan{" "}
-        {proposals && (
-          <strong className="text-primary">{proposals.length} Proposal</strong>
-        )}
-      </h1>
-      <div className="grid grid-cols-4 gap-5">
+      <div className=" space-y-3">
+        <h1 className="text-xl text-muted-foreground">
+          Showing{" "}
+          {filteredProposals && (
+            <strong className="text-primary">
+              {filteredProposals.length} Proposals
+            </strong>
+          )}
+        </h1>
+        <Select value={filter} onValueChange={setFilter}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filter Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Proposals</SelectItem>
+            <SelectItem value="voting">Voting</SelectItem>
+            <SelectItem value="fundraising">Fundraising</SelectItem>
+            <SelectItem value="approved">Approved</SelectItem>
+            <SelectItem value="rejected">Rejected</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="grid xl:grid-cols-3 2xl:grid-cols-4 gap-5">
         {isLoading && <p>Loading...</p>}
-        {proposals?.map((proposal, index: number) => {
+        {filteredProposals.map((proposal, index: number) => {
+          const username = allProfile.find(
+            (profile) => profile.id === proposal.proposer
+          )?.username;
           return (
-            <Link href={`/proposal/${index}`} key={index}>
-              <div className="rounded-md bg-gradient-to-br from-[#1d4ed8] via-black to-black hover:from-black hover:to-[#1d4ed8] p-5 duration-300 transition ease-in-out">
-                <Image
-                  src={`https://giveth.io/_next/image?url=https%3A%2F%2Fgiveth.mypinata.cloud%2Fipfs%2FQmYdgHKGzuRa3ww9nAZWsoRsvk1kb35yW2x1CKPVm6jVWr&w=1920&q=75`}
-                  alt="Proposal Image "
-                  width={500}
-                  height={300}
-                  className="rounded-md object-cover mb-3"
-                />
-                <h2 className="text-lg font-semibold capitalize">
-                  {proposal.title}
-                </h2>
-                <div className="flex items-center gap-2">
-                  <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.pnsg" />
-                    <AvatarFallback>
-                      {proposal.proposer.charAt(1)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <p className="text-sm text-muted-foreground ">
-                    {proposal.proposer.slice(0, 5)}...
-                    {proposal.proposer.slice(-5)}
-                  </p>
-                </div>
-                <p className="line-clamp-2 mb-3">{proposal.description}</p>
-                <div className="text-end">
-                  <p className="text-xs text-muted-foreground">
-                    Jumlah Terkumpul
-                  </p>
-                  {!loadingTotalDonations && (
-                    <NumberTicker
-                      className="font-bold text-3xl"
-                      value={
-                        typeof totalDonations === "bigint"
-                          ? parseFloat(formatUnits(totalDonations, 2))
-                          : 0
-                      }
-                    />
-                  )}
-                  IDRX
-                </div>
-                <p className="text-sm text-muted-foreground text-end">
-                  berakhir:{" "}
-                  {moment(Number(proposal.deadline) * 1000).format("LLL")}
-                </p>
-              </div>
+            <Link
+              href={`/proposal/${proposals.length - 1 - index}`}
+              key={index}
+            >
+              <MagicCard>
+                <Card className="pt-0 hover:bg-secondary/20 duration-300">
+                  <Image
+                    src={proposal.image}
+                    alt="Proposal Image"
+                    width={1920}
+                    height={1080}
+                    className="object-cover aspect-video rounded-md"
+                    priority={true}
+                  />
+                  <CardHeader>
+                    {filter === "all" && (
+                      <Badge variant="outline">
+                        <Status index={index} />
+                      </Badge>
+                    )}
+                    <CardTitle className="truncate">{proposal.title}</CardTitle>
+                    <CardDescription className="line-clamp-2">
+                      Created by @{username}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="line-clamp-1 text-sm">
+                      {proposal.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </MagicCard>
             </Link>
           );
         })}

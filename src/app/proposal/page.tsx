@@ -4,7 +4,7 @@ import React from "react";
 
 export default function page() {
   return (
-    <main className="space-y-20">
+    <main className="space-y-10">
       <Hero />
       <Proposal />
     </main>

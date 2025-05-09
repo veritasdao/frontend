@@ -6,17 +6,28 @@ import { useReadContract } from "wagmi";
 
 type ProposalCardType = {
   title: string;
+  image: string;
+  github: string;
+  whitepaper: string;
+  ownerlink: string;
   description: string;
+  motivasi: string;
+  rincian: string;
+  keuntungan: string;
+  tantangan: string;
+  dampakdanhasil: string;
   proposer: string;
   requestedAmount: number;
-  deadline: number;
+  votingDeadline: number;
+  fundraisingDeadline: number;
   yesVotes: number;
   noVotes: number;
-  quorum: number;
   executed: boolean;
   approved: boolean;
-  withdrawn: boolean;
-  rewardPool: number;
+  totalYesPower: number;
+  totalNoPower: number;
+  tokenAddress: string;
+  distributed: boolean;
 };
 export default function useGetProposals() {
   const { data, isLoading, refetch } = useReadContract({

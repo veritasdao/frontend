@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "gateway.pinata.cloud",
+        port: "",
+        pathname: "/**",
+      },
     ],
     domains: [
       "api.microlink.io", // Microlink Image Preview
