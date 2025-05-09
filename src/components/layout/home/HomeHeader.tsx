@@ -21,7 +21,7 @@ export default function HomeHeader() {
         </li>
         <li>
           <Link
-            href={"/"}
+            href={"https://bento.me/veritasdao"}
             target="_blank"
             className="text-sm flex gap-2 items-center text-muted-foreground hover:text-primary duration-300"
           >

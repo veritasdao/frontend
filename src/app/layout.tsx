@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   authors: [
     {
-      name: "Kazuya Team",
+      name: "Zaky Irsyad Rais",
       url: "https://www.veritasdao.xyz",
     },
   ],
