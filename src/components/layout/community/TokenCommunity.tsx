@@ -1,5 +1,6 @@
 "use client";
 import useGetTokenInfo from "@/hooks/getTokenInfo";
+import useGetTotalFundraising from "@/hooks/getTotalFundraising";
 import React from "react";
 import { formatUnits } from "viem";
 import {
@@ -14,6 +15,40 @@ import {
 export default function TokenCommunity({ index }: { index: number }) {
   //   const { proposal } = useGetDetailProposals(index);
   const { tokenInfo } = useGetTokenInfo({ index });
+  const { totalFundraising } = useGetTotalFundraising(index);
+  const [idrUsdRate, setIdrUsdRate] = React.useState<number>(0);
+
+  React.useEffect(() => {
+    async function fetchIDRUSDRate() {
+      try {
+        const response = await fetch(
+          "https://api.exchangerate-api.com/v4/latest/IDR"
+        );
+        const data = await response.json();
+        const rate = data.rates.USD;
+        setIdrUsdRate(rate);
+      } catch (error) {
+        console.error("Failed to fetch IDR/USD rate:", error);
+      }
+    }
+
+    fetchIDRUSDRate();
+  }, []);
+
+  const formattedValue = totalFundraising
+    ? parseFloat(formatUnits(BigInt(totalFundraising as bigint), 2))
+    : 0;
+
+  // Calculate token price (IDRX price in USD)
+  const tokenPrice = idrUsdRate; // Since IDRX is 1:1 with IDR
+
+  // Calculate liquidity (Total Fundraising in USD)
+  const liquidity = formattedValue * tokenPrice;
+
+  // Calculate market cap (Total Supply × Token Price)
+  const TOTAL_SUPPLY = 1_000_000_000; // 1 billion tokens
+  const marketCap = TOTAL_SUPPLY * tokenPrice;
+
   return (
     <Card>
       <CardHeader>
@@ -68,11 +103,11 @@ export default function TokenCommunity({ index }: { index: number }) {
           <section className="grid grid-cols-2 gap-5">
             <div>
               <h3 className="text-muted-foreground text-sm">Liquidity</h3>
-              <p className="text-xl font-semibold">$ 1000.000</p>
+              <p className="text-xl font-semibold">$ {liquidity.toFixed(2)}</p>
             </div>
             <div>
               <h3 className="text-muted-foreground text-sm">Market Cap</h3>
-              <p className="text-xl font-semibold">$ 1000.000</p>
+              <p className="text-xl font-semibold">$ {marketCap.toFixed(2)}</p>
             </div>
           </section>
         </div>

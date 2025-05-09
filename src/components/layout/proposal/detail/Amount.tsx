@@ -303,6 +303,10 @@ export default function Amount({
           <p className="text-muted-foreground text-sm">Target: </p>
           <CurrencyAmount amount={formattedRequestedAmount} size="small" />
         </div>
+        <p className="text-muted-foreground text-xs">
+          Note: Amount can be above or below target. Any additional funds will
+          support the proposal.
+        </p>
       </div>
 
       {/* Voting section */}

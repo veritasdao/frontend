@@ -5,7 +5,7 @@ export default function Hero() {
     <section>
       <h1 className="text-5xl font-bold">
         From Community, <br />
-        For Community
+        To Community
       </h1>
       <p className="text-muted-foreground w-1/2 mt-2">
         Join us. Be part of the movement that prioritizes transparency,

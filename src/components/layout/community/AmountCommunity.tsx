@@ -1,7 +1,6 @@
 "use client";
 import { NumberTicker } from "@/components/magicui/number-ticker";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
@@ -11,17 +10,36 @@ import {
 import useGetTokenDAOBalance from "@/hooks/getTokenDAOBalance";
 import useGetTokenInfo from "@/hooks/getTokenInfo";
 import useGetTotalFundraising from "@/hooks/getTotalFundraising";
+import React from "react";
 import { formatUnits } from "viem";
 
 export default function AmountCommunity({ index }: { index: number }) {
-  const { totalFundraising, isLoading: isLoadingFundraising } =
-    useGetTotalFundraising(index);
+  const { totalFundraising } = useGetTotalFundraising(index);
   const { tokenInfo } = useGetTokenInfo({
     index,
   });
-  const { balanceToken, isLoading: isLoadingBalance } = useGetTokenDAOBalance({
+  const { balanceToken } = useGetTokenDAOBalance({
     tokenAddress: tokenInfo?.tokenAddress as `0x${string}`,
   });
+
+  const [idrUsdRate, setIdrUsdRate] = React.useState<number>(0);
+
+  React.useEffect(() => {
+    async function fetchIDRUSDRate() {
+      try {
+        const response = await fetch(
+          "https://api.exchangerate-api.com/v4/latest/IDR"
+        );
+        const data = await response.json();
+        const rate = data.rates.USD;
+        setIdrUsdRate(rate);
+      } catch (error) {
+        console.error("Failed to fetch IDR/USD rate:", error);
+      }
+    }
+
+    fetchIDRUSDRate();
+  }, []);
 
   const formattedValue = totalFundraising
     ? parseFloat(formatUnits(BigInt(totalFundraising as bigint), 2))
@@ -31,6 +49,15 @@ export default function AmountCommunity({ index }: { index: number }) {
     ? parseFloat(formatUnits(balanceToken as bigint, 2))
     : 0;
 
+  const liquidity = formattedValue * idrUsdRate;
+
+  // Calculate token price (IDRX price in USD)
+  const tokenPrice = idrUsdRate; // Since IDRX is 1:1 with IDR
+
+  // Calculate market cap using total supply (1 billion) and token price
+  const TOTAL_SUPPLY = 1_000_000_000; // 1 billion tokens
+  const marketCap = TOTAL_SUPPLY * tokenPrice;
+
   const percentageHolding =
     balanceToken && tokenInfo?.totalSupply
       ? (Number(formatUnits(balanceToken as bigint, 2)) /
@@ -38,23 +65,23 @@ export default function AmountCommunity({ index }: { index: number }) {
         100
       : 0;
 
-  if (isLoadingFundraising || isLoadingBalance) {
-    return (
-      <section className="space-y-6">
-        <div className="bg-card border rounded-lg p-6 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, i) => (
-              <section key={i} className="flex flex-col space-y-2">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-8 w-32" />
-              </section>
-            ))}
-          </div>
-        </div>
-        <Skeleton className="h-12 w-48" />
-      </section>
-    );
-  }
+  // if (isLoadingFundraising || isLoadingBalance) {
+  //   return (
+  //     <section className="space-y-6">
+  //       <div className="bg-card border rounded-lg p-6 shadow-sm">
+  //         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+  //           {[...Array(3)].map((_, i) => (
+  //             <section key={i} className="flex flex-col space-y-2">
+  //               <Skeleton className="h-4 w-24" />
+  //               <Skeleton className="h-8 w-32" />
+  //             </section>
+  //           ))}
+  //         </div>
+  //       </div>
+  //       <Skeleton className="h-12 w-48" />
+  //     </section>
+  //   );
+  // }
 
   return (
     <section className="space-y-6">
@@ -104,8 +131,9 @@ export default function AmountCommunity({ index }: { index: number }) {
             <div className="flex items-center gap-2">
               <span className="text-2xl font-semibold">$</span>
               <NumberTicker
-                value={formattedValue}
+                value={liquidity}
                 className="text-2xl font-semibold"
+                decimalPlaces={2}
               />
             </div>
           </section>
@@ -140,7 +168,11 @@ export default function AmountCommunity({ index }: { index: number }) {
 
       <div className="flex items-center gap-2">
         <span className="text-4xl font-bold">$</span>
-        <NumberTicker value={6003.722} className="text-4xl font-bold" />
+        <NumberTicker
+          value={marketCap}
+          className="text-4xl font-bold"
+          decimalPlaces={2}
+        />
         <span className="text-muted-foreground text-2xl font-medium">
           Market Cap
         </span>

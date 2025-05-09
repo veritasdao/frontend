@@ -1,5 +1,4 @@
 "use client";
-import useGetDonates from "@/hooks/getDonates";
 import React from "react";
 import {
   Card,
@@ -16,19 +15,49 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import moment from "moment";
 import { formatUnits } from "viem";
+import useGetFundraising from "@/hooks/getFundraising";
 
 export default function HistoryFundraising({ index }: { index: number }) {
-  const { donates } = useGetDonates(index) as {
-    donates: Array<{
-      address: string;
-      amount: bigint;
-      timestamp: bigint;
-    }>;
-  };
+  const { fundraising, isLoading } = useGetFundraising(index);
 
-  if (!donates || donates.length === 0) {
+  if (isLoading) {
+    return (
+      <Card className="bg-transparent border-[#1d4ed8]">
+        <CardHeader>
+          <CardTitle>Fundraising History</CardTitle>
+          <CardDescription>Recent fundraising activities</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-center text-muted-foreground">Loading...</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!fundraising || !Array.isArray(fundraising) || fundraising.length < 3) {
+    return (
+      <Card className="bg-transparent border-[#1d4ed8]">
+        <CardHeader>
+          <CardTitle>Fundraising History</CardTitle>
+          <CardDescription>Recent fundraising activities</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-center text-muted-foreground">
+            No fundraising history yet
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const [contributors, amounts] = fundraising;
+
+  if (
+    !Array.isArray(contributors) ||
+    !Array.isArray(amounts) ||
+    contributors.length === 0
+  ) {
     return (
       <Card className="bg-transparent border-[#1d4ed8]">
         <CardHeader>
@@ -55,24 +84,27 @@ export default function HistoryFundraising({ index }: { index: number }) {
           <TableHeader>
             <TableRow>
               <TableHead>Address</TableHead>
-              <TableHead>Time</TableHead>
+              {/* <TableHead>Time</TableHead> */}
               <TableHead className="text-right">Amount</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {donates.map((donate, i) => {
-              const formatedAmount = formatUnits(donate.amount, 2);
-              const formatedDate = moment(
-                Number(donate.timestamp) * 1000
-              ).format("LLLL");
+            {contributors.map((contributor, i) => {
+              const amount = amounts[i];
+              if (typeof amount !== "bigint") return null;
+
+              const formatedAmount = formatUnits(amount, 2);
+              // const formatedDate = moment(
+              //   Number(donate.timestamp) * 1000
+              // ).format("LLLL");
 
               return (
                 <TableRow key={i}>
                   <TableCell className="font-medium">
-                    {String(donate.address).slice(0, 5)}...
-                    {String(donate.address).slice(-5)}
+                    {String(contributor).slice(0, 5)}...
+                    {String(contributor).slice(-5)}
                   </TableCell>
-                  <TableCell className="font-medium">{formatedDate}</TableCell>
+                  {/* <TableCell className="font-medium">{formatedDate}</TableCell> */}
                   <TableCell className="text-right text-xl">
                     {formatedAmount} <span className="text-sm">IDRX</span>
                   </TableCell>

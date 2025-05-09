@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import React from "react";
 import { DAOToken } from "@/config/DAO";
 import { DAOABI } from "@/config/DAO";
+import { Loader2 } from "lucide-react";
 
 type StatusBarProps = {
   index: number;
@@ -185,12 +186,15 @@ export default function StatusBar({ index }: StatusBarProps) {
                   <Button
                     onClick={executeProposal}
                     disabled={
-                      isPending || proposal?.executed || isLoadingReceipt
+                      isPending ||
+                      proposal?.executed ||
+                      isLoadingReceipt ||
+                      votingDeadline.isAfter(now)
                     }
                   >
-                    {/* {isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : null} */}
+                    {isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    ) : null}
                     Start Fundraising
                   </Button>
                 )}

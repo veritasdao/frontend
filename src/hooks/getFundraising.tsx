@@ -22,17 +22,24 @@ import { useReadContract } from "wagmi";
 //   totalNoPower: number;
 //   //   totalDonated: number;
 // };
-export default function useGetDonates(index: number) {
+
+type FundraisingData = [bigint, string[], bigint[]] | undefined;
+
+export default function useGetFundraising(index: number) {
   const {
-    data: donates,
+    data: fundraising,
     isLoading,
     refetch,
   } = useReadContract({
     abi: DAOABI,
     address: DAOToken,
-    functionName: "getDonates",
+    functionName: "getFundraising",
     args: [index], // Ganti dengan index proposal yang sesuai
-  });
+  }) as {
+    data: FundraisingData;
+    isLoading: boolean;
+    refetch: () => void;
+  };
 
   // const proposals = data as ProposalDetailType[]; // ✅ cast ke tipe yang tepa
 
@@ -41,7 +48,7 @@ export default function useGetDonates(index: number) {
   }, [refetch]);
 
   return {
-    donates,
+    fundraising,
     isLoading,
   };
 }

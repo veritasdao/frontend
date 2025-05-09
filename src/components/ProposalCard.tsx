@@ -26,9 +26,12 @@ import { MagicCard } from "./magicui/magic-card";
 import moment from "moment";
 import Status from "@/lib/Status";
 import { Badge } from "./ui/badge";
+import useGetAllProfile from "@/hooks/getAllProfile";
 
 export default function ProposalCard() {
   const { proposals, isLoading } = useGetProposals();
+  const { profile: allProfile } = useGetAllProfile();
+
   // const [index, setIndex] = React.useState<number | null>(null);
   const [filter, setFilter] = React.useState<string>("all");
 
@@ -116,6 +119,9 @@ export default function ProposalCard() {
       <div className="grid xl:grid-cols-3 2xl:grid-cols-4 gap-5">
         {isLoading && <p>Loading...</p>}
         {filteredProposals.map((proposal, index: number) => {
+          const username = allProfile.find(
+            (profile) => profile.id === proposal.proposer
+          )?.username;
           return (
             <Link
               href={`/proposal/${proposals.length - 1 - index}`}
@@ -139,12 +145,13 @@ export default function ProposalCard() {
                     )}
                     <CardTitle className="truncate">{proposal.title}</CardTitle>
                     <CardDescription className="line-clamp-2">
-                      {proposal.proposer.slice(0, 5)}...
-                      {proposal.proposer.slice(-5)}
+                      Created by @{username}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p className="line-clamp-2">{proposal.description}</p>
+                    <p className="line-clamp-1 text-sm">
+                      {proposal.description}
+                    </p>
                   </CardContent>
                 </Card>
               </MagicCard>

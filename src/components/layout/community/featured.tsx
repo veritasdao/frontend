@@ -85,12 +85,12 @@ export default function Featured() {
       </Marquee> */}
       <Marquee reverse pauseOnHover className="[--duration:10s]">
         {filteredProposals
-          .slice(Math.ceil(filteredProposals.length / 2))
+          // .slice(Math.ceil(filteredProposals.length / 2))
           .map((proposal, index) => (
             <ReviewCard
               key={index}
               img={proposal.image}
-              name="DAO Token"
+              name={proposal.title}
               description={proposal.description}
               tokenAddress={proposal.tokenAddress}
             />

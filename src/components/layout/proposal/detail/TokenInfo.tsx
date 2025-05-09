@@ -32,10 +32,18 @@ export default function TokenInfo({ index }: { index: number }) {
             <div>
               <h3 className="text-lg font-semibold">{proposal?.name}</h3>
               <h3 className="text-sm font-semibold">$ {proposal?.symbol}</h3>
-              <p className="text-muted-foreground text-sm">
-                Contract Address: {tokenInfo?.tokenAddress.slice(0, 6)}...
-                {tokenInfo?.tokenAddress.slice(-4)}
-              </p>
+
+              {tokenInfo?.tokenAddress !==
+              "0x0000000000000000000000000000000000000000" ? (
+                <p className="text-muted-foreground text-sm">
+                  Contract Address: {tokenInfo?.tokenAddress.slice(0, 6)}...
+                  {tokenInfo?.tokenAddress.slice(-4)}
+                </p>
+              ) : (
+                <p className="text-muted-foreground text-sm italic">
+                  Token not created
+                </p>
+              )}
             </div>
           </section>
           <hr />
